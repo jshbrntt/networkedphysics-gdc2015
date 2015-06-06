@@ -19,23 +19,17 @@ static const int RightPort = 1001;
 
 enum SyncMode
 {
-    SYNC_MODE_UNCOMPRESSED,
-    SYNC_MODE_COMPRESSED,
-    SYNC_MODE_QUANTIZE_ON_BOTH_SIDES,
-    SYNC_MODE_PACKET_LOSS,
-    SYNC_MODE_BASIC_SMOOTHING,
-    SYNC_MODE_ADAPTIVE_SMOOTHING,
+    SYNC_MODE_INPUT_AND_STATE,
+    SYNC_MODE_QUANTIZE,
+    SYNC_MODE_SMOOTHING,
     SYNC_NUM_MODES
 };
 
 const char * sync_mode_descriptions[]
 {
-    "Uncompressed",
-    "Compressed",
+    "Input and State",
     "Quantize on both sides",
-    "Packet Loss",
-    "Basic Smoothing",
-    "Adaptive Smoothing"
+    "Smoothing"
 };
 
 struct SyncModeData
@@ -368,8 +362,8 @@ SyncDemo::SyncDemo( core::Allocator & allocator )
 {
     InitSyncModes();
 
-    SetMode( SYNC_MODE_UNCOMPRESSED );
-    
+    SetMode( SYNC_MODE_INPUT_AND_STATE );
+
     m_allocator = &allocator;
     m_internal = nullptr;
     m_settings = CORE_NEW( *m_allocator, CubesSettings );

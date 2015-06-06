@@ -2,9 +2,8 @@ solution "Protocol"
     includedirs { "src", "external", "tools", "." }
     platforms { "x64" }
     configurations { "Release", "Debug" }
-    flags { "Symbols", "ExtraWarnings", "EnableSSE2" }
-    rtti "Off"
-    configuration "Release"
+    flags { "Symbols", "ExtraWarnings", "EnableSSE2", "FloatFast" , "NoRTTI", "NoExceptions" }
+    configuration "Debug" --Release"
         flags { "OptimizeSpeed" }
         defines { "NDEBUG" }
 
@@ -75,6 +74,7 @@ project "TestNetwork"
     kind "ConsoleApp"
     files { "tests/Network/Test*.cpp" }
     links { "Core", "Network", "Protocol", "ClientServer" }
+    location "build"
     targetdir "bin"
 
 project "TestProtocol"
@@ -82,6 +82,7 @@ project "TestProtocol"
     kind "ConsoleApp"
     files { "tests/Protocol/Test*.cpp" }
     links { "Core", "Network", "Protocol", "ClientServer" }
+    location "build"
     targetdir "bin"
 
 project "TestClientServer"
@@ -89,17 +90,6 @@ project "TestClientServer"
     kind "ConsoleApp"
     files { "tests/ClientServer/Test*.cpp" }
     links { "Core", "Network", "Protocol", "ClientServer" }
-    targetdir "bin"
-
-project "TestCubes"
-    language "C++"
-    kind "ConsoleApp"
-    files { "tests/Cubes/*.cpp" }
-    links { "Core", "Cubes", "ode" }
-	configuration "Debug"
-		links { "ode-debug" }
-	configuration "Release"
-		links { "ode" }
     targetdir "bin"
 
 project "TestVirtualGo"
@@ -315,8 +305,8 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 TestCore; make -j4 TestNetwork; make -j4 TestProtocol; make -j4 TestClientServer; make -j4 TestCubes; make -j4 TestVirtualGo" == 0 then
-                os.execute "./bin/TestCore; ./bin/TestNetwork; ./bin/TestProtocol; ./bin/TestClientServer; ./bin/TestCubes; ./bin/TestVirtualGo"
+            if os.execute "make -j4 TestCore; make -j4 TestNetwork; make -j4 TestProtocol; make -j4 TestClientServer; make -j4 TestVirtualGo" == 0 then
+                os.execute "cd bin; ./TestCore; ./TestNetwork; ./TestProtocol; ./TestClientServer; ./TestVirtualGo"
             end
         end
     }

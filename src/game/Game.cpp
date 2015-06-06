@@ -396,8 +396,6 @@ int main( int /*argc*/, char ** /*argv*/ )
 
     while ( true )
     {
-        // ...
-
         server->Update( global.timeBase );
 
         core::sleep_milliseconds( (int) ( global.timeBase.deltaTime * 1000.0 ) );

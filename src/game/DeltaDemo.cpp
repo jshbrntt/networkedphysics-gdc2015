@@ -549,7 +549,7 @@ void UpdateDeltaStats( const QuantizedCubeState & cube, const QuantizedCubeState
     const int quaternion_y = (int) core::clamp( ( orientation.y() + 1.0f ) / 2.0f * ( MaxQuaternionDelta - 1 ) + 0.5f, 0.0f, float( MaxQuaternionDelta - 1 ) );
     const int quaternion_z = (int) core::clamp( ( orientation.z() + 1.0f ) / 2.0f * ( MaxQuaternionDelta - 1 ) + 0.5f, 0.0f, float( MaxQuaternionDelta - 1 ) );
     const int quaternion_w = (int) core::clamp( ( orientation.w() + 1.0f ) / 2.0f * ( MaxQuaternionDelta - 1 ) + 0.5f, 0.0f, float( MaxQuaternionDelta - 1 ) );
- 
+
     const int base_quaternion_x = (int) core::clamp( ( base_orientation.x() + 1.0f ) / 2.0f * ( MaxQuaternionDelta - 1 ) + 0.5f, 0.0f, float( MaxQuaternionDelta - 1 ) );
     const int base_quaternion_y = (int) core::clamp( ( base_orientation.y() + 1.0f ) / 2.0f * ( MaxQuaternionDelta - 1 ) + 0.5f, 0.0f, float( MaxQuaternionDelta - 1 ) );
     const int base_quaternion_z = (int) core::clamp( ( base_orientation.z() + 1.0f ) / 2.0f * ( MaxQuaternionDelta - 1 ) + 0.5f, 0.0f, float( MaxQuaternionDelta - 1 ) );

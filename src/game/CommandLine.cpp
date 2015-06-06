@@ -25,8 +25,6 @@ void StoreCommandLine( const char * commandLine )
 
 void ProcessCommandLine()
 {
-    // todo: implement proper command line parsing, eg. "-blah", "-blah = X", "+command something something something -switch"
-
     // muahahaha I'm so lazy.
 
 //    printf( "command line: '%s'\n", buffer );

@@ -1,5 +1,4 @@
-/*
-    Networked Physics Example
+// Core Library - Copyright (c) 2008-2015, Glenn Fiedler
 
     Copyright © 2008 - 2016, The Network Protocol Company, Inc.
 

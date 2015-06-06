@@ -74,9 +74,6 @@ namespace virtualgo
             {
                 const float MaxAngularMomentum = 10;
 
-                // todo: I'd like to clamp at maximum angular VELOCITY not momentum
-                // i only care how fast it is rotating, not how much mass it has
-
                 float x = core::clamp( angularMomentum.x(), -MaxAngularMomentum, MaxAngularMomentum );
                 float y = core::clamp( angularMomentum.y(), -MaxAngularMomentum, MaxAngularMomentum );
                 float z = core::clamp( angularMomentum.z(), -MaxAngularMomentum, MaxAngularMomentum );
