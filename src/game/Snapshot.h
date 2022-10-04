@@ -1378,7 +1378,7 @@ struct SnapshotInterpolationBuffer
 
     void AddSnapshot( double time, uint16_t sequence, const CubeState * cube_state )
     {
-        CORE_ASSERT( cube_state > 0 );
+        CORE_ASSERT( cube_state > (void *)0 );
 
         if ( stopped )
         {
