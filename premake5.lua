@@ -1,10 +1,15 @@
 solution "Protocol"
     includedirs { "src", "external", "tools", "." }
     platforms { "x64" }
-    configurations { "Release", "Debug" }
-    flags { "Symbols", "ExtraWarnings", "EnableSSE2", "FloatFast" , "NoRTTI", "NoExceptions" }
-    configuration "Debug" --Release"
-        flags { "OptimizeSpeed" }
+    configurations { "Debug", "Release" }
+    symbols "On"
+    warnings "Extra"
+    vectorextensions "SSE2"
+    floatingpoint "Fast"
+    filter "configurations:Debug"
+        defines { "DEBUG" }
+    filter "configurations:Release"
+        optimize "Speed"
         defines { "NDEBUG" }
 
 project "Core"
@@ -153,7 +158,8 @@ project "Client"
     language "C++"
     kind "ConsoleApp"
     files { "src/game/*.cpp" }
-    links { "Core", "Network", "Protocol", "ClientServer", "VirtualGo", "Cubes", "nvImage", "tinycthread", "ode", "glew", "glfw3", "GLUT.framework", "OpenGL.framework", "Cocoa.framework", "CoreVideo.framework", "IOKit.framework" }
+    links { "Core", "Network", "Protocol", "ClientServer", "VirtualGo", "Cubes", "nvImage", "tinycthread", "ode", "glew", "glfw", "GLUT.framework", "OpenGL.framework", "Cocoa.framework", "CoreVideo.framework", "IOKit.framework" }
+    location "build"
     targetdir "bin"
     defines { "CLIENT" }
 --]]
@@ -173,12 +179,10 @@ if _ACTION == "clean" then
     os.rmdir "bin"
     os.rmdir "lib"
     os.rmdir "obj"
-    if not os.is "windows" then
-        os.execute "rm -rf bin"
-        os.execute "rm -rf obj"
-        os.execute "rm -f Makefile"
-        os.execute "rm -f *.zip"
-        os.execute "rm -f *.make"
+    os.rmdir "build"
+    if not os.ishost "windows" then
+        os.execute "rm -f Protocol.zip"
+        os.execute "rm -f *.txt"
         os.execute "rm -f replay.bin"
         os.execute "rm -rf output"
         os.execute "find . -name .DS_Store -delete"
@@ -201,7 +205,7 @@ if _ACTION == "clean" then
     end
 end
 
-if not os.is "windows" then
+if not os.ishost "windows" then
 
     newaction 
     {
@@ -305,7 +309,7 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 TestCore; make -j4 TestNetwork; make -j4 TestProtocol; make -j4 TestClientServer; make -j4 TestVirtualGo" == 0 then
+            if os.execute "make -j4 TestCore; make -j4 TestNetwork; make -j4 TestProtocol; make -j4 TestClientServer; make -j4 TestVirtualGo" then
                 os.execute "cd bin; ./TestCore; ./TestNetwork; ./TestProtocol; ./TestClientServer; ./TestVirtualGo"
             end
         end
@@ -320,8 +324,8 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 TestCore" == 0 then
-                os.execute "./bin/TestCore"
+            if os.execute "make -j4 TestCore" then
+                os.execute "cd bin; ./TestCore"
             end
         end
     }
@@ -335,8 +339,8 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 TestNetwork" == 0 then
-                os.execute "./bin/TestNetwork"
+            if os.execute "make -j4 TestNetwork" then
+                os.execute "cd bin; ./TestNetwork"
             end
         end
     }
@@ -350,8 +354,8 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 TestProtocol" == 0 then
-                os.execute "./bin/TestProtocol"
+            if os.execute "make -j4 TestProtocol" then
+                os.execute "cd bin; ./TestProtocol"
             end
         end
     }
@@ -365,8 +369,8 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 TestClientServer" == 0 then
-                os.execute "./bin/TestClientServer"
+            if os.execute "make -j4 TestClientServer" then
+                os.execute "cd bin; ./TestClientServer"
             end
         end
     }
@@ -380,8 +384,8 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 TestCubes" == 0 then
-                os.execute "./bin/TestCubes"
+            if os.execute "make -j4 TestCubes" then
+                os.execute "cd bin; ./TestCubes"
             end
         end
     }
@@ -395,8 +399,8 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 TestVirtualGo" == 0 then
-                os.execute "./bin/TestVirtualGo"
+            if os.execute "make -j4 TestVirtualGo" then
+                os.execute "cd bin; ./TestVirtualGo"
             end
         end
     }
@@ -410,8 +414,8 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 FontTool" == 0 then
-                if os.execute "bin/FontTool assets/fonts/Fonts.json" ~= 0 then
+            if os.execute "make -j4 FontTool" then
+                if not os.execute "bin/FontTool assets/fonts/Fonts.json" then
                     os.exit(1)
                 end
             end
@@ -428,8 +432,8 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 StoneTool" == 0 then
-                if os.execute "rm -rf data/stones; mkdir -p data/stones; bin/StoneTool" ~= 0 then
+            if os.execute "make -j4 StoneTool" then
+                if not os.execute "rm -rf data/stones; mkdir -p data/stones; bin/StoneTool" then
                     os.exit(1)
                 end
             end
@@ -445,7 +449,7 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 Client" ~= 0 then
+            if not os.execute "make -j4 Client" then
                 os.exit(1)
             end
             os.execute "bin/Client"
@@ -461,7 +465,7 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 Server" ~= 0 then
+            if not os.execute "make -j4 Server" then
                 os.exit(1)
             end
             os.execute "bin/Server"
@@ -477,7 +481,7 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 Client" ~= 0 then
+            if not os.execute "make -j4 Client" then
                 os.exit(1)
             end
             os.execute "bin/Client +load stone"
@@ -493,10 +497,10 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "rm -rf output; mkdir -p output" ~= 0 then
+            if not os.execute "rm -rf output; mkdir -p output" then
                 os.exit(1)
             end
-            if os.execute "make -j4 Client" ~= 0 then
+            if not os.execute "make -j4 Client" then
                 os.exit(1)
             end
             os.execute "bin/Client +load cubes"
@@ -512,10 +516,10 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "rm -rf output; mkdir -p output" ~= 0 then
+            if not os.execute "rm -rf output; mkdir -p output" then
                 os.exit(1)
             end
-            if os.execute "make -j4 Client" ~= 0 then
+            if not os.execute "make -j4 Client" then
                 os.exit(1)
             end
             os.execute "bin/Client +load lockstep"
@@ -531,10 +535,10 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "rm -rf output; mkdir -p output" ~= 0 then
+            if not os.execute "rm -rf output; mkdir -p output" then
                 os.exit(1)
             end
-            if os.execute "make -j4 Client" ~= 0 then
+            if not os.execute "make -j4 Client" then
                 os.exit(1)
             end
             os.execute "bin/Client +load snapshot"
@@ -550,10 +554,10 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "rm -rf output; mkdir -p output" ~= 0 then
+            if not os.execute "rm -rf output; mkdir -p output" then
                 os.exit(1)
             end
-            if os.execute "make -j4 Client" ~= 0 then
+            if not os.execute "make -j4 Client" then
                 os.exit(1)
             end
             os.execute "bin/Client +load compression"
@@ -569,10 +573,10 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "rm -rf output; mkdir -p output" ~= 0 then
+            if not os.execute "rm -rf output; mkdir -p output" then
                 os.exit(1)
             end
-            if os.execute "make -j4 Client" ~= 0 then
+            if not os.execute "make -j4 Client" then
                 os.exit(1)
             end
             os.execute "bin/Client +load delta"
@@ -588,10 +592,10 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "rm -rf output; mkdir -p output" ~= 0 then
+            if not os.execute "rm -rf output; mkdir -p output" then
                 os.exit(1)
             end
-            if os.execute "make -j4 Client" ~= 0 then
+            if not os.execute "make -j4 Client" then
                 os.exit(1)
             end
             os.execute "bin/Client +load sync"
@@ -607,10 +611,10 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "rm -rf output; mkdir -p output" ~= 0 then
+            if not os.execute "rm -rf output; mkdir -p output" then
                 os.exit(1)
             end
-            if os.execute "make -j4 Client" ~= 0 then
+            if not os.execute "make -j4 Client" then
                 os.exit(1)
             end
             os.execute "bin/Client +playback"
@@ -626,7 +630,7 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 Server" == 0 then
+            if os.execute "make -j4 Server" then
                 os.execute "bin/Server"
             end
         end
@@ -641,7 +645,7 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 SoakProtocol" == 0 then
+            if os.execute "make -j4 SoakProtocol" then
                 os.execute "bin/SoakProtocol"
             end
         end
@@ -656,7 +660,7 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 SoakClientServer" == 0 then
+            if os.execute "make -j4 SoakClientServer" then
                 os.execute "bin/SoakClientServer"
             end
         end
@@ -671,7 +675,7 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 ProfileProtocol" == 0 then
+            if os.execute "make -j4 ProfileProtocol" then
                 os.execute "bin/ProfileProtocol"
             end
         end
@@ -686,7 +690,7 @@ if not os.is "windows" then
         valid_tools = premake.action.get("gmake").valid_tools,
      
         execute = function ()
-            if os.execute "make -j4 ProfileClientServer" == 0 then
+            if os.execute "make -j4 ProfileClientServer" then
                 os.execute "bin/ProfileClientServer"
             end
         end
