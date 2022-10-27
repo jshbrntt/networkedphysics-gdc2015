@@ -279,7 +279,7 @@ int main( int argc, char * argv[] )
     else
         //window = glfwCreateWindow( 600, 250, "Client", nullptr, nullptr );
         //window = glfwCreateWindow( 1200, 500, "Client", nullptr, nullptr );
-        window = glfwCreateWindow( 1000, 500, "Client", nullptr, nullptr );
+        window = glfwCreateWindow( 1280, 720, "Client", nullptr, nullptr );
         //window = glfwCreateWindow( 500, 250, "Client", nullptr, nullptr );        // note: video capture resolution
         //window = glfwCreateWindow( 960, 540, "Client", nullptr, nullptr );        // note: 1080p @ retina (X2)
 
