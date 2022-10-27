@@ -277,7 +277,7 @@ namespace cubes
 		// setup geom and attach to body
 
 		impl->objects[id].scale = initialObjectState.scale;
-		impl->objects[id].geom = dCreateBox( impl->space, initialObjectState.scale, initialObjectState.scale, initialObjectState.scale );
+		impl->objects[id].geom = dCreateSphere( impl->space, initialObjectState.scale );
 
 		dGeomSetBody( impl->objects[id].geom, impl->objects[id].body );	
 
