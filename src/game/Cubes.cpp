@@ -3,6 +3,7 @@
 #include "Render.h"
 #include "Console.h"
 #include "ShaderManager.h"
+#include "Icosphere.h"
 
 void CubesInternal::Initialize( core::Allocator & allocator, const CubesConfig & config, const CubesSettings * settings )
 {
@@ -424,6 +425,8 @@ CubesRender::~CubesRender()
     mask_vbo = 0;
 }
 
+Icosphere sphere(2.0f, 2, false);
+
 void CubesRender::Initialize()
 {
     CORE_ASSERT( !initialized );
@@ -448,12 +451,12 @@ void CubesRender::Initialize()
 
         glGenBuffers( 1, &cubes_vbo );
         glBindBuffer( GL_ARRAY_BUFFER, cubes_vbo );
-        glBufferData( GL_ARRAY_BUFFER, sizeof( cube_vertices ), cube_vertices, GL_STATIC_DRAW );
+        glBufferData( GL_ARRAY_BUFFER, sphere.getInterleavedVertexSize(), sphere.getInterleavedVertices(), GL_STATIC_DRAW );
         glBindBuffer( GL_ARRAY_BUFFER, 0 );
      
         glGenBuffers( 1, &cubes_ibo );
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, cubes_ibo );
-        glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( cube_indices ), cube_indices, GL_STATIC_DRAW );
+        glBufferData( GL_ELEMENT_ARRAY_BUFFER, sphere.getIndexSize(), sphere.getIndices(), GL_STATIC_DRAW );
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 
         glGenBuffers( 1, &cubes_instance_buffer );
@@ -466,16 +469,18 @@ void CubesRender::Initialize()
 
         glBindBuffer( GL_ARRAY_BUFFER, cubes_vbo );
 
+        int stride = sphere.getInterleavedStride();
+
         if ( position_location >= 0 )
         {
             glEnableVertexAttribArray( position_location );
-            glVertexAttribPointer( position_location, 3, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (GLubyte*)0 );
+            glVertexAttribPointer(position_location, 3, GL_FLOAT, false, stride, (void*)0);
         }
 
         if ( normal_location >= 0 )
         {
             glEnableVertexAttribArray( normal_location );
-            glVertexAttribPointer( normal_location, 3, GL_FLOAT, GL_FALSE, sizeof(CubeVertex), (GLubyte*)(3*4) );
+            glVertexAttribPointer(normal_location,   3, GL_FLOAT, false, stride, (void*)(sizeof(float)*3));
         }
 
         glBindBuffer( GL_ARRAY_BUFFER, cubes_instance_buffer );
@@ -695,7 +700,7 @@ void CubesRender::RenderCubes( const view::Cubes & cubes )
 
     glBindVertexArray( cubes_vao );
 
-    glDrawElementsInstanced( GL_TRIANGLES, sizeof( cube_indices ) / 2, GL_UNSIGNED_SHORT, nullptr, cubes.numCubes );
+    glDrawElementsInstanced( GL_TRIANGLES, sphere.getIndexCount(), GL_UNSIGNED_INT, nullptr, cubes.numCubes );
 
     glBindVertexArray( 0 );
 
