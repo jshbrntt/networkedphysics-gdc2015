@@ -11,6 +11,7 @@ libglew-dev \
 libglfw3-dev \
 libglm-dev \
 libjansson-dev \
+libpng-dev \
 nodejs \
 tig
 
