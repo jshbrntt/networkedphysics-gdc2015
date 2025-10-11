@@ -8,11 +8,15 @@
 
 
 #ifndef VECTORIAL_FORCED
+    // Force scalar mode for WSL2 compatibility (AVX-512 issues)
+    #define VECTORIAL_SCALAR
+
+    /*
     #if defined(__SSE__)
 
         #define VECTORIAL_SSE
 
-    #elif defined(__ARM_NEON__) 
+    #elif defined(__ARM_NEON__)
 
         #define VECTORIAL_NEON
 
@@ -27,6 +31,7 @@
         #define VECTORIAL_SCALAR
 
     #endif
+    */
 #endif
 
 

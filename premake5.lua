@@ -5,7 +5,8 @@ solution "Protocol"
     configurations { "Debug", "Release" }
     symbols "On"
     warnings "Extra"
-    vectorextensions "SSE2"
+    -- vectorextensions "SSE2"  -- Disabled for WSL2 compatibility
+    buildoptions "-mno-avx -mno-avx2 -mno-avx512f"  -- Disable AVX for WSL2 compatibility
     floatingpoint "Fast"
     filter "configurations:Debug"
         defines { "DEBUG" }

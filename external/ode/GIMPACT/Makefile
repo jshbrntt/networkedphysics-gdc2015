@@ -183,13 +183,13 @@ AUTOMAKE = ${SHELL} /workspaces/networkedphysics-gdc2015/external/ode/missing au
 AWK = mawk
 CC = clang-19
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2
+CFLAGS = -g -O2 -mno-avx -mno-avx2 -mno-avx512f
 CPP = clang-19 -E
 CPPFLAGS = 
 CXX = clang++-19
 CXXCPP = clang++-19 -E
 CXXDEPMODE = depmode=gcc3
-CXXFLAGS = -g -O2
+CXXFLAGS = -g -O2 -mno-avx -mno-avx2 -mno-avx512f
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
