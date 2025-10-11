@@ -4,7 +4,7 @@
 #include "protocol/Message.h"
 #include "protocol/BlockMessage.h"
 #include "protocol/MessageFactory.h"
-#include "clientServer/ClientServerEnums.h"
+#include "ClientServer/ClientServerEnums.h"
 #include "GameContext.h"
 
 enum MessageType

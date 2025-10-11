@@ -7,27 +7,13 @@
 #include "core/Types.h"
 #include <stdint.h>
 #include <stddef.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 extern "C"
 {
-    extern void * memset( void * str, int c, size_t n );
-    extern void * memcpy( void * dst, const void * src, size_t n );
-    extern int memcmp ( const void * ptr1, const void * ptr2, size_t num );
-    extern void * memmove( void * dest, const void * src, size_t count );
-    extern void * malloc( size_t size );
-    extern void free( void * ptr );
-    extern int rand();
-    extern void srand( unsigned int seed );
-    extern int atoi( const char * string );
-    extern size_t strlen( const char * string );
-    extern int strcmp( const char * str1, const char * str2 );
-    extern char * strcpy( char * destination, const char * source );
-    extern char * strncpy( char * destination, const char * source, size_t size );
     extern char * strncpy_safe( char * destination, const char * source, size_t size );
-    extern int printf( const char * format, ... );
-    extern int sprintf( char * str, const char * format, ... );
-    extern int snprintf( char * str, size_t size, const char * format, ... );
-    extern void exit( int result );
 }
 
 namespace core

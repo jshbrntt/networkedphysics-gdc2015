@@ -1,7 +1,7 @@
 #ifndef GAME_SERVER_H
 #define GAME_SERVER_H
 
-#include "clientServer/Server.h"
+#include "ClientServer/Server.h"
 #include "GameContext.h"
 #include "GamePackets.h"
 #include "GameMessages.h"

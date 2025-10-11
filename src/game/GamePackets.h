@@ -4,7 +4,7 @@
 #include "protocol/Stream.h"
 #include "protocol/PacketFactory.h"
 #include "protocol/ConnectionPacket.h"
-#include "clientServer/ClientServerPackets.h"
+#include "ClientServer/ClientServerPackets.h"
 
 enum PacketTypes
 {

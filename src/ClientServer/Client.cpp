@@ -1,6 +1,6 @@
 // Client Server Library - Copyright (c) 2008-2015, Glenn Fiedler
 
-#include "clientServer/Client.h"
+#include "ClientServer/Client.h"
 #include "protocol/Connection.h"
 #include "network/Simulator.h"
 #include "network/Interface.h"

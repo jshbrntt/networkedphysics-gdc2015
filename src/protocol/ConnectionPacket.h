@@ -6,11 +6,11 @@
 #include "Packet.h"
 #include "Stream.h"
 #include "Channel.h"
-#include "Memory.h"
+#include "core/Memory.h"
 #include "PacketFactory.h"
 
-#include "clientServer/ClientServerContext.h"
-#include "clientServer/ClientServerEnums.h"
+#include "ClientServer/ClientServerContext.h"
+#include "ClientServer/ClientServerEnums.h"
 
 namespace protocol
 {

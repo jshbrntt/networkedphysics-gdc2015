@@ -3,7 +3,7 @@
 #ifndef GAME_CLIENT_H
 #define GAME_CLIENT_H
 
-#include "clientServer/Client.h"
+#include "ClientServer/Client.h"
 
 extern class GameClient * CreateGameClient( core::Allocator & allocator, int clientPort = 0 );
 
