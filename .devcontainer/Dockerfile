@@ -18,6 +18,7 @@ libpng-dev \
 libtool \
 libxi-dev \
 libxrandr-dev \
+libxxf86vm-dev \
 nodejs \
 tig
 
