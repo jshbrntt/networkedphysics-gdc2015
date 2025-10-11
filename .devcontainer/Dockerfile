@@ -16,6 +16,8 @@ libglm-dev \
 libjansson-dev \
 libpng-dev \
 libtool \
+libxi-dev \
+libxrandr-dev \
 nodejs \
 tig
 
