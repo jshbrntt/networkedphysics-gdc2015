@@ -1,5 +1,6 @@
 solution "Protocol"
-    includedirs { "src", "external", "tools", "." }
+    includedirs { "src", "external", "external/ode/include", "tools", "." }
+    libdirs { "external/ode/ode/src/.libs" }
     platforms { "x64" }
     configurations { "Debug", "Release" }
     symbols "On"
@@ -16,7 +17,7 @@ project "Core"
     language "C++"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
     kind "StaticLib"
-    files { "src/Core/*.h", "src/Core/*.cpp" }
+    files { "src/core/*.h", "src/core/*.cpp" }
     targetdir "lib"
 
 project "Network"
@@ -47,7 +48,7 @@ project "VirtualGo"
     language "C++"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
     kind "StaticLib"
-    files { "src/VirtualGo/*.h", "src/VirtualGo/*.cpp" }
+    files { "src/virtualgo/*.h", "src/virtualgo/*.cpp" }
     links { "Core" }
     targetdir "lib"
 
@@ -55,7 +56,7 @@ project "Cubes"
     language "C++"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
     kind "StaticLib"
-    files { "src/Cubes/*.h", "src/Cubes/*.cpp" }
+    files { "src/cubes/*.h", "src/cubes/*.cpp" }
     links { "Core" }
     targetdir "lib"
 
@@ -76,7 +77,7 @@ project "TestCore"
     language "C++"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
     kind "ConsoleApp"
-    files { "tests/Core/*.cpp" }
+    files { "tests/core/*.cpp" }
     links { "Core" }
     location "build"
     targetdir "bin"
@@ -85,8 +86,8 @@ project "TestNetwork"
     language "C++"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
     kind "ConsoleApp"
-    files { "tests/Network/Test*.cpp" }
-    links { "Core", "Network", "Protocol", "ClientServer" }
+    files { "tests/network/Test*.cpp" }
+    links { "ClientServer", "Protocol", "Network", "Core" }
     location "build"
     targetdir "bin"
 
@@ -94,8 +95,8 @@ project "TestProtocol"
     language "C++"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
     kind "ConsoleApp"
-    files { "tests/Protocol/Test*.cpp" }
-    links { "Core", "Network", "Protocol", "ClientServer" }
+    files { "tests/protocol/Test*.cpp" }
+    links { "ClientServer", "Protocol", "Network", "Core" }
     location "build"
     targetdir "bin"
 
@@ -104,7 +105,7 @@ project "TestClientServer"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
     kind "ConsoleApp"
     files { "tests/ClientServer/Test*.cpp" }
-    links { "Core", "Network", "Protocol", "ClientServer" }
+    links { "ClientServer", "Protocol", "Network", "Core" }
     location "build"
     targetdir "bin"
 
@@ -112,7 +113,7 @@ project "TestVirtualGo"
     language "C++"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
     kind "ConsoleApp"
-    files { "tests/VirtualGo/*.cpp" }
+    files { "tests/virtualgo/*.cpp" }
     links { "Core", "VirtualGo", "ode" }
     location "build"
     targetdir "bin"
@@ -121,8 +122,8 @@ project "SoakProtocol"
     language "C++"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
     kind "ConsoleApp"
-    files { "tests/Protocol/SoakProtocol.cpp" }
-    links { "Core", "Network", "Protocol", "ClientServer" }
+    files { "tests/protocol/SoakProtocol.cpp" }
+    links { "ClientServer", "Protocol", "Network", "Core" }
     targetdir "bin"
     location "build"
 
@@ -131,7 +132,7 @@ project "SoakClientServer"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
     kind "ConsoleApp"
     files { "tests/ClientServer/SoakClientServer.cpp" }
-    links { "Core", "Network", "Protocol", "ClientServer" }
+    links { "ClientServer", "Protocol", "Network", "Core" }
     targetdir "bin"
     location "build"
 
@@ -139,8 +140,8 @@ project "ProfileProtocol"
     language "C++"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
     kind "ConsoleApp"
-    files { "tests/Protocol/ProfileProtocol.cpp" }
-    links { "Core", "Network", "Protocol", "ClientServer" }
+    files { "tests/protocol/ProfileProtocol.cpp" }
+    links { "ClientServer", "Protocol", "Network", "Core" }
     targetdir "bin"
     location "build"
 
@@ -149,7 +150,7 @@ project "ProfileClientServer"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
     kind "ConsoleApp"
     files { "tests/ClientServer/ProfileClientServer.cpp" }
-    links { "Core", "Network", "Protocol", "ClientServer" }
+    links { "ClientServer", "Protocol", "Network", "Core" }
     targetdir "bin"
     location "build"
 
@@ -158,7 +159,7 @@ project "FontTool"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
     kind "ConsoleApp"
     files { "tools/Font/*.cpp" }
-    links { "Core", "Freetype", "Jansson" }
+    links { "Core", "freetype", "jansson" }
     location "build"
     targetdir "bin"
 
@@ -167,7 +168,7 @@ project "StoneTool"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
     kind "ConsoleApp"
     files { "tools/Stone/*.cpp" }
-    links { "Core", "VirtualGo", "Jansson" }
+    links { "Core", "VirtualGo", "jansson" }
     location "build"
     targetdir "bin"
 
@@ -176,7 +177,12 @@ project "Client"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
     kind "ConsoleApp"
     files { "src/game/*.cpp" }
-    links { "Core", "Network", "Protocol", "ClientServer", "VirtualGo", "Cubes", "nvImage", "tinycthread", "ode", "glew", "glfw", "GLUT.framework", "OpenGL.framework", "Cocoa.framework", "CoreVideo.framework", "IOKit.framework" }
+    links { "VirtualGo", "Cubes", "ClientServer", "Protocol", "Network", "Core", "nvImage", "tinycthread", "ode", "GLEW", "glfw" }
+    filter "system:macosx"
+        links { "GLUT.framework", "OpenGL.framework", "Cocoa.framework", "CoreVideo.framework", "IOKit.framework" }
+    filter "system:linux"
+        links { "GL", "GLU", "X11", "Xrandr", "Xi", "Xxf86vm", "pthread", "dl" }
+    filter {}
     location "build"
     targetdir "bin"
     defines { "CLIENT" }
@@ -186,7 +192,7 @@ project "Server"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
     kind "ConsoleApp"
     files { "src/game/*.cpp" }
-    links { "Core", "Network", "Protocol", "ClientServer", "Cubes", "ode" }
+    links { "Cubes", "ClientServer", "Protocol", "Network", "Core", "ode" }
     location "build"
     targetdir "bin"
 

@@ -7,6 +7,7 @@
 #ifndef VIEW_OBJECT_H
 #define VIEW_OBJECT_H
 
+#include <cstdint>
 #include "Config.h"
 #include "Mathematics.h"
 

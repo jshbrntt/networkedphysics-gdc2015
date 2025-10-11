@@ -7,6 +7,8 @@
 #ifndef CUBES_ENGINE_H
 #define CUBES_ENGINE_H
 
+#include <algorithm>
+#include <cstring>
 #include "Config.h"
 #include "Mathematics.h"
 #include "Activation.h"

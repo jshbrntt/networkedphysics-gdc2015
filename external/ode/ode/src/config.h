@@ -9,23 +9,17 @@
 /* Define if building universal (internal helper macro) */
 /* #undef AC_APPLE_UNIVERSAL_BUILD */
 
-/* Define to one of `_getb67', `GETB67', `getb67' for Cray-2 and Cray-YMP
-   systems. This function is required for `alloca.c' support on those systems.
-   */
-/* #undef CRAY_STACKSEG_END */
-
-/* Define to 1 if using `alloca.c'. */
+/* Define to 1 if using 'alloca.c'. */
 /* #undef C_ALLOCA */
 
-/* Define to 1 if you have `alloca', as a function or macro. */
+/* Define to 1 if you have 'alloca', as a function or macro. */
 #define HAVE_ALLOCA 1
 
-/* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
-   */
+/* Define to 1 if <alloca.h> works. */
 #define HAVE_ALLOCA_H 1
 
 /* Use the Apple OpenGL framework. */
-#define HAVE_APPLE_OPENGL_FRAMEWORK 1
+/* #undef HAVE_APPLE_OPENGL_FRAMEWORK */
 
 /* Define to 1 if you have the `atan2f' function. */
 #define HAVE_ATAN2F 1
@@ -73,7 +67,7 @@
 #define HAVE_ISNAN 1
 
 /* Define to 1 if you have the `isnanf' function. */
-/* #undef HAVE_ISNANF */
+#define HAVE_ISNANF 1
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
@@ -85,7 +79,7 @@
 #define HAVE_LIMITS_H 1
 
 /* Define to 1 if you have the <malloc.h> header file. */
-/* #undef HAVE_MALLOC_H */
+#define HAVE_MALLOC_H 1
 
 /* Define to 1 if you have the <math.h> header file. */
 #define HAVE_MATH_H 1
@@ -93,14 +87,11 @@
 /* Define to 1 if you have the `memmove' function. */
 #define HAVE_MEMMOVE 1
 
-/* Define to 1 if you have the <memory.h> header file. */
-#define HAVE_MEMORY_H 1
-
 /* Define to 1 if you have the `memset' function. */
 #define HAVE_MEMSET 1
 
 /* Define to 1 if libc includes obstacks. */
-/* #undef HAVE_OBSTACK */
+#define HAVE_OBSTACK 1
 
 /* Define to 1 if you have the `pthread_attr_setstacklazy' function. */
 /* #undef HAVE_PTHREAD_ATTR_SETSTACKLAZY */
@@ -121,7 +112,7 @@
 #define HAVE_STDARG_H 1
 
 /* Define to 1 if stdbool.h conforms to C99. */
-/* #undef HAVE_STDBOOL_H */
+#define HAVE_STDBOOL_H 1
 
 /* Define to 1 if you have the <stddef.h> header file. */
 #define HAVE_STDDEF_H 1
@@ -166,7 +157,7 @@
 #define HAVE_VSNPRINTF 1
 
 /* Define to 1 if the system has the type `_Bool'. */
-/* #undef HAVE__BOOL */
+#define HAVE__BOOL 1
 
 /* Define to 1 if you have the `_isnan' function. */
 /* #undef HAVE__ISNAN */
@@ -185,7 +176,7 @@
 #define LT_OBJDIR ".libs/"
 
 /* Mac OS X version setting for OU Library */
-#define MAC_OS_X_VERSION 1050
+/* #undef MAC_OS_X_VERSION */
 
 /* Name of package */
 #define PACKAGE "ode"
@@ -219,7 +210,9 @@
 	STACK_DIRECTION = 0 => direction of growth unknown */
 /* #undef STACK_DIRECTION */
 
-/* Define to 1 if you have the ANSI C header files. */
+/* Define to 1 if all of the C90 standard headers exist (not just the ones
+   required in a freestanding environment). This macro is provided for
+   backward compatibility; new code need not use it. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
@@ -244,7 +237,7 @@
 #define _OU_NAMESPACE odeou
 
 /* Target OS setting for OU Library */
-#define _OU_TARGET_OS _OU_TARGET_OS_MAC
+#define _OU_TARGET_OS _OU_TARGET_OS_GENUNIX
 
 /* Define for Solaris 2.5.1 so the uint32_t typedef from <sys/synch.h>,
    <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the

@@ -1,8 +1,9 @@
 /*
     Stone Tool
     Copyright (c) 2008-2015, Glenn Fiedler
-*/  
+*/
 
+#include <algorithm>
 #include "virtualgo/Biconvex.h"
 #include "virtualgo/InertiaTensor.h"
 #include "core/Core.h"

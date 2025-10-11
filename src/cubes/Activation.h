@@ -7,6 +7,9 @@
 #ifndef CUBES_ACTIVATION_H
 #define CUBES_ACTIVATION_H
 
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
 #include "Config.h"
 #include "Mathematics.h"
 #include <vector>

@@ -1,8 +1,8 @@
 #ifndef TEST_CLIENT_SERVER_H
 #define TEST_CLIENT_SERVER_H
 
-#include "clientServer/Client.h"
-#include "clientServer/Server.h"
+#include "ClientServer/Client.h"
+#include "ClientServer/Server.h"
 #include "TestMessages.h"
 
 class TestClient : public clientServer::Client

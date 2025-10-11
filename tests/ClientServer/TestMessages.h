@@ -5,7 +5,7 @@
 #include "protocol/ProtocolEnums.h"
 #include "protocol/BlockMessage.h"
 #include "protocol/MessageFactory.h"
-#include "clientServer/ClientServerEnums.h"
+#include "ClientServer/ClientServerEnums.h"
 
 enum MessageType
 {

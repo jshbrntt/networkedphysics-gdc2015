@@ -4,6 +4,7 @@
 #include "core/Hash.h"
 #include "core/Queue.h"
 #include <string.h>
+#include <ctime>
 #include <algorithm>
 
 void test_sequence()

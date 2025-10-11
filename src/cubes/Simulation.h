@@ -7,6 +7,7 @@
 #ifndef CUBES_SIMULATION_H
 #define CUBES_SIMULATION_H
 
+#include <cstdint>
 #include "Config.h"
 #include "Mathematics.h"
 #include <vector>

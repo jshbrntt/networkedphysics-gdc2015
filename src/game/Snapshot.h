@@ -1098,10 +1098,10 @@ struct QuantizedSnapshot_HighPrecision
     QuantizedCubeState_HighPrecision cubes[NumCubes];
 };
 
-static void InterpolateSnapshot_Linear( float t, 
-                                        const __restrict CubeState * a, 
-                                        const __restrict CubeState * b, 
-                                        __restrict view::ObjectUpdate * output )
+static void InterpolateSnapshot_Linear( float t,
+                                        const CubeState * __restrict a,
+                                        const CubeState * __restrict b,
+                                        view::ObjectUpdate * __restrict output )
 {
     for ( int i = 0; i < NumCubes; ++i )
     {
@@ -1130,11 +1130,11 @@ inline void hermite_spline( float t,
     output = h1*p0 + h2*p1 + h3*t0 + h4*t1;
 }
 
-static void InterpolateSnapshot_Hermite( float t, 
+static void InterpolateSnapshot_Hermite( float t,
                                          float step_size,
-                                         const __restrict CubeState * a, 
-                                         const __restrict CubeState * b, 
-                                         __restrict view::ObjectUpdate * output )
+                                         const CubeState * __restrict a,
+                                         const CubeState * __restrict b,
+                                         view::ObjectUpdate * __restrict output )
 {
     for ( int i = 0; i < NumCubes; ++i )
     {
@@ -1149,12 +1149,12 @@ static void InterpolateSnapshot_Hermite( float t,
     }
 }
 
-static void InterpolateSnapshot_Hermite_WithExtrapolation( float t, 
+static void InterpolateSnapshot_Hermite_WithExtrapolation( float t,
                                                            float step_size,
                                                            float extrapolation,
-                                                           const __restrict CubeState * a, 
-                                                           const __restrict CubeState * b, 
-                                                           __restrict view::ObjectUpdate * output )
+                                                           const CubeState * __restrict a,
+                                                           const CubeState * __restrict b,
+                                                           view::ObjectUpdate * __restrict output )
 {
     for ( int i = 0; i < NumCubes; ++i )
     {
