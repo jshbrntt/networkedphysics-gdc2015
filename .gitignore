@@ -6,3 +6,10 @@ nvImage.make
 obj/
 output/
 replay.bin
+*.o
+*.lo
+*.la
+*.lai
+*.a
+*.h.in~
+autom4te.cache/

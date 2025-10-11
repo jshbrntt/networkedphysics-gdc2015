@@ -6,12 +6,16 @@ RUN wget https://github.com/premake/premake-core/releases/download/v5.0.0-beta1/
 RUN echo "alias pm='premake5'" >> /home/vscode/.bashrc
 
 RUN apt-get update && apt-get install --no-install-recommends --yes \
+autoconf \
+automake \
 clang-19 \
+libfreetype-dev \
 libglew-dev \
 libglfw3-dev \
 libglm-dev \
 libjansson-dev \
 libpng-dev \
+libtool \
 nodejs \
 tig
 
