@@ -8,11 +8,14 @@ solution "Protocol"
     -- vectorextensions "SSE2"  -- Disabled for WSL2 compatibility
     buildoptions "-mno-avx -mno-avx2 -mno-avx512f"  -- Disable AVX for WSL2 compatibility
     floatingpoint "Fast"
+    -- Static linking configuration
+    staticruntime "On"
     filter "configurations:Debug"
         defines { "DEBUG" }
     filter "configurations:Release"
         optimize "Speed"
         defines { "NDEBUG" }
+    filter {}
 
 project "Core"
     language "C++"
@@ -178,11 +181,28 @@ project "Client"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
     kind "ConsoleApp"
     files { "src/game/*.cpp" }
-    links { "VirtualGo", "Cubes", "ClientServer", "Protocol", "Network", "Core", "nvImage", "tinycthread", "ode", "GLEW", "glfw" }
+    links { "VirtualGo", "Cubes", "ClientServer", "Protocol", "Network", "Core", "nvImage", "tinycthread", "ode" }
     filter "system:macosx"
-        links { "GLUT.framework", "OpenGL.framework", "Cocoa.framework", "CoreVideo.framework", "IOKit.framework" }
+        links { "GLEW", "glfw", "GLUT.framework", "OpenGL.framework", "Cocoa.framework", "CoreVideo.framework", "IOKit.framework" }
     filter "system:linux"
-        links { "GL", "GLU", "X11", "Xrandr", "Xi", "Xxf86vm", "pthread", "dl" }
+        -- No links here - all specified in linkoptions for precise control
+        -- Comprehensive static linking strategy with explicit library control
+        linkoptions {
+            -- First: statically link all available X11 and graphics libraries
+            "-Wl,-Bstatic",
+            "-lGLEW", "-lGLU",
+            "-lX11", "-lXrandr", "-lXi", "-lXxf86vm",
+            "-lXext", "-lXrender", "-lxcb",
+            "-lXau", "-lXdmcp",
+            "-lpthread",
+            -- Switch to dynamic for libraries without static versions
+            "-Wl,-Bdynamic",
+            "-lglfw", "-lGL",
+            -- System libraries (usually dynamic)
+            "-ldl", "-lm", "-lc",
+            -- Force static C++ runtime last
+            "-static-libgcc", "-static-libstdc++"
+        }
     filter {}
     location "build"
     targetdir "bin"
@@ -194,6 +214,9 @@ project "Server"
     kind "ConsoleApp"
     files { "src/game/*.cpp" }
     links { "Cubes", "ClientServer", "Protocol", "Network", "Core", "ode" }
+    filter "system:linux"
+        linkoptions { "-static-libgcc", "-static-libstdc++" }
+    filter {}
     location "build"
     targetdir "bin"
 

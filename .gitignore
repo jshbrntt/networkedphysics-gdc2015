@@ -13,3 +13,8 @@ replay.bin
 *.a
 *.h.in~
 autom4te.cache/
+*.mesh
+*.stone
+*.frag
+*.vert
+*.font
