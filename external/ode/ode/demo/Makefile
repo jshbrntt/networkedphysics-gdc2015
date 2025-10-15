@@ -472,7 +472,7 @@ CPPFLAGS =
 CXX = clang++-19
 CXXCPP = clang++-19 -E
 CXXDEPMODE = depmode=gcc3
-CXXFLAGS = -g -O2 -mno-avx -mno-avx2 -mno-avx512f
+CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps

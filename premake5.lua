@@ -21,7 +21,7 @@ solution "Protocol"
 function build_ode()
     if not os.ishost "windows" then
         prebuildcommands {
-            "cd ../external/ode && (test -f ode/src/.libs/libode.a || (CXXFLAGS='-g -O2 -mno-avx -mno-avx2 -mno-avx512f' ./configure && make all))"
+            "cd ../external/ode && (test -f ode/src/.libs/libode.a || (./configure && make all))"
         }
     end
 end
