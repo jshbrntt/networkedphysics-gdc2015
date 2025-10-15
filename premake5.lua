@@ -17,6 +17,15 @@ solution "Protocol"
         defines { "NDEBUG" }
     filter {}
 
+-- Helper function to build ODE if needed
+function build_ode()
+    if not os.ishost "windows" then
+        prebuildcommands {
+            "cd ../external/ode && (test -f ode/src/.libs/libode.a || (CXXFLAGS='-g -O2 -mno-avx -mno-avx2 -mno-avx512f' ./configure && make all))"
+        }
+    end
+end
+
 project "Core"
     language "C++"
     buildoptions "-std=c++11 -Wno-deprecated-declarations"
@@ -119,6 +128,7 @@ project "TestVirtualGo"
     kind "ConsoleApp"
     files { "tests/virtualgo/*.cpp" }
     links { "Core", "VirtualGo", "ode" }
+    build_ode()
     location "build"
     targetdir "bin"
 
@@ -182,6 +192,7 @@ project "Client"
     kind "ConsoleApp"
     files { "src/game/*.cpp" }
     links { "VirtualGo", "Cubes", "ClientServer", "Protocol", "Network", "Core", "nvImage", "tinycthread", "ode" }
+    build_ode()
     filter "system:macosx"
         links { "GLEW", "glfw", "GLUT.framework", "OpenGL.framework", "Cocoa.framework", "CoreVideo.framework", "IOKit.framework" }
     filter "system:linux"
@@ -214,6 +225,7 @@ project "Server"
     kind "ConsoleApp"
     files { "src/game/*.cpp" }
     links { "Cubes", "ClientServer", "Protocol", "Network", "Core", "ode" }
+    build_ode()
     filter "system:linux"
         linkoptions { "-static-libgcc", "-static-libstdc++" }
     filter {}
