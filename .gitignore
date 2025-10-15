@@ -18,3 +18,10 @@ autom4te.cache/
 *.frag
 *.vert
 *.font
+
+# CMake build artifacts
+build/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
