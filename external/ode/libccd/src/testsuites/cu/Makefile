@@ -167,7 +167,7 @@ AWK = mawk
 CC = clang-19
 CCDEPMODE = depmode=gcc3
 CCD_PRECISION = CCD_SINGLE
-CFLAGS = -g -O2 -mno-avx -mno-avx2 -mno-avx512f
+CFLAGS = -g -O2
 CPP = clang-19 -E
 CPPFLAGS = 
 CXX = clang++-19

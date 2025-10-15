@@ -189,7 +189,7 @@ AUTOMAKE = ${SHELL} /workspaces/networkedphysics-gdc2015/external/ode/missing au
 AWK = mawk
 CC = clang-19
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2 -mno-avx -mno-avx2 -mno-avx512f
+CFLAGS = -g -O2
 CPP = clang-19 -E
 CPPFLAGS = 
 CXX = clang++-19
