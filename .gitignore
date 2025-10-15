@@ -18,6 +18,7 @@ autom4te.cache/
 *.frag
 *.vert
 *.font
+*.log
 
 # CMake build artifacts
 build/
