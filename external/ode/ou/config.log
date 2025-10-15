@@ -35,7 +35,6 @@ PATH: /usr/bin
 PATH: /sbin
 PATH: /bin
 PATH: /home/vscode/.local/bin
-PATH: /home/vscode/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand
 
 
 ## ----------- ##

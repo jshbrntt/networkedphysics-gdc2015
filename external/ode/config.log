@@ -35,7 +35,6 @@ PATH: /usr/bin
 PATH: /sbin
 PATH: /bin
 PATH: /home/vscode/.local/bin
-PATH: /home/vscode/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand
 
 
 ## ----------- ##
@@ -1243,7 +1242,7 @@ configure:17366: $? = 0
 configure:17366: result: yes
 configure:17366: checking for _isnan
 configure:17366: clang-19 -o conftest -g -O2   conftest.c -lm  -lpthread >&5
-/usr/bin/ld: /tmp/conftest-0623da.o: in function `main':
+/usr/bin/ld: /tmp/conftest-7688ce.o: in function `main':
 /workspaces/networkedphysics-gdc2015/external/ode/conftest.c:93: undefined reference to `_isnan'
 clang-19: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:17366: $? = 1
@@ -1347,7 +1346,7 @@ configure: failed program was:
 configure:17366: result: no
 configure:17366: checking for _isnanf
 configure:17366: clang-19 -o conftest -g -O2   conftest.c -lm  -lpthread >&5
-/usr/bin/ld: /tmp/conftest-e6ba89.o: in function `main':
+/usr/bin/ld: /tmp/conftest-252809.o: in function `main':
 /workspaces/networkedphysics-gdc2015/external/ode/conftest.c:93: undefined reference to `_isnanf'
 clang-19: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:17366: $? = 1
@@ -1477,7 +1476,7 @@ configure:17366: $? = 0
 configure:17366: result: yes
 configure:17366: checking for pthread_attr_setstacklazy
 configure:17366: clang-19 -o conftest -g -O2   conftest.c -lm  -lpthread >&5
-/usr/bin/ld: /tmp/conftest-017e20.o: in function `main':
+/usr/bin/ld: /tmp/conftest-eba82b.o: in function `main':
 /workspaces/networkedphysics-gdc2015/external/ode/conftest.c:97: undefined reference to `pthread_attr_setstacklazy'
 clang-19: error: linker command failed with exit code 1 (use -v to see invocation)
 configure:17366: $? = 1

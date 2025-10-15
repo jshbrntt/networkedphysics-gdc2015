@@ -66,9 +66,9 @@ function(build_ode_if_needed)
     if(UNIX AND NOT APPLE)
         add_custom_command(
             OUTPUT ${CMAKE_SOURCE_DIR}/external/ode/ode/src/.libs/libode.a
-            COMMAND cd ${CMAKE_SOURCE_DIR}/external/ode && test -f ode/src/.libs/libode.a || (./configure && make all)
+            COMMAND ${CMAKE_SOURCE_DIR}/build_ode.sh
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "Building ODE library if needed"
-            VERBATIM
         )
         add_custom_target(ode_build DEPENDS ${CMAKE_SOURCE_DIR}/external/ode/ode/src/.libs/libode.a)
     endif()

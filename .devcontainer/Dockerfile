@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install --no-install-recommends --yes \
 autoconf \
 automake \
 clang-19 \
+cmake \
 libfreetype-dev \
 libglew-dev \
 libglfw3-dev \
