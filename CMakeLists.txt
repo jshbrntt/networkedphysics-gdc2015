@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 project(Protocol)
 
 # Set C++ standard
-set(CMAKE_CXX_STANDARD 11)
+find_package(Jolt REQUIRED)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set C standard for C files
@@ -36,8 +37,8 @@ endif()
 add_compile_options(-Wall -Wextra)
 add_compile_options(-Wno-deprecated-declarations)
 
-# Disable AVX for WSL2 compatibility
-add_compile_options(-mno-avx -mno-avx2 -mno-avx512f)
+# Disable AVX for WSL2 compatibility, but enable SSE4.1 for Jolt Physics
+add_compile_options(-mno-avx -mno-avx2 -mno-avx512f -msse4.1)
 
 # Fast floating point
 add_compile_options(-ffast-math)
@@ -109,12 +110,14 @@ file(GLOB VIRTUALGO_SOURCES src/virtualgo/*.cpp)
 file(GLOB VIRTUALGO_HEADERS src/virtualgo/*.h)
 add_library(VirtualGo STATIC ${VIRTUALGO_SOURCES} ${VIRTUALGO_HEADERS})
 target_link_libraries(VirtualGo Core)
+target_link_libraries(VirtualGo Jolt::Jolt)
 
 # Cubes Library
 file(GLOB CUBES_SOURCES src/cubes/*.cpp)
 file(GLOB CUBES_HEADERS src/cubes/*.h)
 add_library(Cubes STATIC ${CUBES_SOURCES} ${CUBES_HEADERS})
 target_link_libraries(Cubes Core)
+target_link_libraries(Cubes Jolt::Jolt)
 
 # nvImage Library
 file(GLOB NVIMAGE_SOURCES external/nvImage/*.cpp)
@@ -153,7 +156,7 @@ target_link_libraries(TestClientServer ClientServer Protocol Network Core)
 # TestVirtualGo
 file(GLOB TESTVIRTUALGO_SOURCES tests/virtualgo/*.cpp)
 add_executable(TestVirtualGo ${TESTVIRTUALGO_SOURCES})
-target_link_libraries(TestVirtualGo VirtualGo Core ode)
+target_link_libraries(TestVirtualGo VirtualGo Core ode Jolt::Jolt)
 if(TARGET ode_build)
     add_dependencies(TestVirtualGo ode_build)
 endif()
@@ -206,7 +209,7 @@ add_executable(Client ${GAME_SOURCES})
 target_compile_definitions(Client PRIVATE CLIENT)
 target_link_libraries(Client
     VirtualGo Cubes ClientServer Protocol Network Core
-    nvImage tinycthread ode
+    nvImage tinycthread ode Jolt::Jolt
 )
 
 if(TARGET ode_build)
@@ -249,7 +252,7 @@ endif()
 # Server
 add_executable(Server ${GAME_SOURCES})
 target_link_libraries(Server
-    Cubes ClientServer Protocol Network Core ode
+    Cubes ClientServer Protocol Network Core ode Jolt::Jolt
 )
 
 if(TARGET ode_build)
