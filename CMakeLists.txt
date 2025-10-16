@@ -1,8 +1,19 @@
 cmake_minimum_required(VERSION 3.10)
 project(Protocol)
 
+# Option to choose physics engine
+option(USE_JOLT_PHYSICS "Use Jolt Physics instead of ODE" OFF)
+
 # Set C++ standard
 find_package(Jolt REQUIRED)
+
+# Add compile definition if using Jolt Physics
+if(USE_JOLT_PHYSICS)
+    add_compile_definitions(USE_JOLT_PHYSICS)
+    message(STATUS "Using Jolt Physics engine")
+else()
+    message(STATUS "Using ODE Physics engine (default)")
+endif()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

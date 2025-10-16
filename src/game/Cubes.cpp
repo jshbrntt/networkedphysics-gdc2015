@@ -47,12 +47,12 @@ void CubesInternal::Initialize( core::Allocator & allocator, const CubesConfig &
 
             AddCube( simulation[i].game_instance, 1, vectorial::vec3f(0,0,10) );
 
-            // const float origin = -CubeSteps / 2.0f;
-            // const float z = hypercube::NonPlayerCubeSize / 2.0f;
-            // const int count = CubeSteps;
-            // for ( int y = 0; y < count; ++y )
-            //     for ( int x = 0; x < count; ++x )
-            //         AddCube( simulation[i].game_instance, 0, vectorial::vec3f(x+origin+0.5f,y+origin+0.5f,z) );
+            const float origin = -CubeSteps / 2.0f;
+            const float z = hypercube::NonPlayerCubeSize / 2.0f;
+            const int count = CubeSteps;
+            for ( int y = 0; y < count; ++y )
+                for ( int x = 0; x < count; ++x )
+                    AddCube( simulation[i].game_instance, 0, vectorial::vec3f(x+origin+0.5f,y+origin+0.5f,z) );
 
             simulation[i].game_instance->InitializeEnd();
 
