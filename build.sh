@@ -87,12 +87,31 @@ fi
 mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR"
 
+if ! command -v conan &> /dev/null; then
+    echo -e "${RED}ERROR: Conan is not installed!${NC}"
+    echo "Please install Conan: pip install conan"
+    exit 1
+fi
+
+echo -e "${YELLOW}Installing JoltPhysics via Conan...${NC}"
+if [ "$VERBOSE" = true ]; then
+    conan install .. --build=missing -s build_type="$BUILD_TYPE"
+else
+    conan install .. --build=missing -s build_type="$BUILD_TYPE" > /dev/null
+fi
+echo -e "${GREEN}Conan dependencies installed${NC}"
+echo ""
+
+# Conan generates files in build/Release/generators/ or build/Debug/generators/
+CONAN_TOOLCHAIN="${BUILD_TYPE}/generators/conan_toolchain.cmake"
+CMAKE_EXTRA_ARGS="-DCMAKE_TOOLCHAIN_FILE=${CONAN_TOOLCHAIN}"
+
 # Configure
 echo -e "${YELLOW}Configuring CMake...${NC}"
 if [ "$VERBOSE" = true ]; then
-    cmake .. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+    cmake .. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON $CMAKE_EXTRA_ARGS
 else
-    cmake .. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON > /dev/null
+    cmake .. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON $CMAKE_EXTRA_ARGS > /dev/null
 fi
 echo -e "${GREEN}Configuration complete${NC}"
 echo ""
