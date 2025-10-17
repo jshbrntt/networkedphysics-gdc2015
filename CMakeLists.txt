@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(Protocol)
 
 # Option to choose physics engine
-option(USE_JOLT_PHYSICS "Use Jolt Physics instead of ODE" OFF)
+option(USE_JOLT_PHYSICS "Use Jolt Physics instead of ODE" ON)
 
 # Set C++ standard
 find_package(Jolt REQUIRED)

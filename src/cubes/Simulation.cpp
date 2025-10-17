@@ -5,6 +5,7 @@
 */
 
 #include "Simulation.h"
+#include <mutex>
 
 // Define USE_JOLT_PHYSICS to use Jolt Physics, otherwise use ODE
 #ifdef USE_JOLT_PHYSICS
@@ -108,6 +109,7 @@ namespace cubes
 	{
 	public:
 		std::vector<std::vector<uint16_t>>* interactions;
+		std::mutex interactions_mutex;
 
 		virtual ValidateResult OnContactValidate(const Body &inBody1, const Body &inBody2, RVec3Arg inBaseOffset, const CollideShapeResult &inCollisionResult) override
 		{
@@ -118,6 +120,9 @@ namespace cubes
 		{
 			uint64_t id1 = inBody1.GetUserData();
 			uint64_t id2 = inBody2.GetUserData();
+
+			// Lock mutex to protect shared interactions vector from concurrent access
+			std::lock_guard<std::mutex> lock(interactions_mutex);
 
 			if (id1 < interactions->size() && id2 < interactions->size())
 			{
