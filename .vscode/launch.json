@@ -5,10 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch",
+            "name": "Debug: Client",
             "type": "lldb",
             "request": "launch",
             "program": "${workspaceRoot}/bin/Client",
+            "args": [],
+            "cwd": "${workspaceRoot}"
+        },
+        {
+            "name": "Debug: Server",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceRoot}/bin/Server",
             "args": [],
             "cwd": "${workspaceRoot}"
         }
