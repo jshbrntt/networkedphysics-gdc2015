@@ -32,6 +32,9 @@ namespace clientServer
 
         m_config.networkInterface->SetContext( m_context );
 
+        if ( m_config.networkSimulator )
+            m_config.networkSimulator->SetContext( m_context );
+
         protocol::ConnectionConfig connectionConfig;
         connectionConfig.maxPacketSize = m_config.networkInterface->GetMaxPacketSize();
         connectionConfig.channelStructure = m_config.channelStructure;
