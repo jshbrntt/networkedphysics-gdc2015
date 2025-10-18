@@ -390,13 +390,13 @@ namespace clientServer
     {
         CORE_ASSERT( packet );
 
-        // printf( "server received connection request packet: clientGuid = %llx\n", packet->clientGuid );
+        printf( "server received connection request packet: clientId = %llx\n", packet->clientId );
 
         auto address = packet->GetAddress();
 
         if ( !m_open )
         {
-            // printf( "server is closed. denying connection request\n" );
+            printf( "server is closed. denying connection request\n" );
 
             auto connectionDeniedPacket = (ConnectionDeniedPacket*) m_packetFactory->Create( CLIENT_SERVER_PACKET_CONNECTION_DENIED );
             connectionDeniedPacket->clientId = packet->clientId;
@@ -410,7 +410,7 @@ namespace clientServer
         int clientIndex = FindClientSlot( address );
         if ( clientIndex != -1 && m_clients[clientIndex].clientId != packet->clientId )
         {
-            // printf( "client is already connected. denying connection request\n" );
+            printf( "client is already connected. denying connection request\n" );
             auto connectionDeniedPacket = (ConnectionDeniedPacket*) m_packetFactory->Create( CLIENT_SERVER_PACKET_CONNECTION_DENIED );
             connectionDeniedPacket->clientId = packet->clientId;
             connectionDeniedPacket->reason = CONNECTION_REQUEST_DENIED_ALREADY_CONNECTED;
@@ -420,14 +420,14 @@ namespace clientServer
 
         if ( FindClientSlot( address, packet->clientId ) != -1 )
         {
-            // printf( "ignoring connection request. client already has a slot\n" );
+            printf( "ignoring connection request. client already has a slot\n" );
             return;
         }
 
         clientIndex = FindFreeClientSlot();
         if ( clientIndex == -1 )
         {
-            // printf( "server is full. denying connection request\n" );
+            printf( "server is full. denying connection request\n" );
             auto connectionDeniedPacket = (ConnectionDeniedPacket*) m_packetFactory->Create( CLIENT_SERVER_PACKET_CONNECTION_DENIED );
             connectionDeniedPacket->clientId = packet->clientId;
             connectionDeniedPacket->reason = CONNECTION_REQUEST_DENIED_SERVER_FULL;
@@ -435,7 +435,7 @@ namespace clientServer
             return;
         }
 
-        // printf( "incoming client connection at index %d\n", clientIndex );
+        printf( "incoming client connection at index %d\n", clientIndex );
 
         CORE_ASSERT( clientIndex >= 0 );
         CORE_ASSERT( clientIndex < m_numClients );
