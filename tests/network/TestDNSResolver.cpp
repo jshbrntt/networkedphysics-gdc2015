@@ -88,7 +88,7 @@ void test_dns_resolve_failure()
 
     std::string garbage_hostname( "aoeusoanthuoaenuhansuhtasthas" );
 
-//    printf( "resolving garbage hostname: %s\n", garbage_hostname.c_str() );
+    printf( "resolving garbage hostname: %s\n", garbage_hostname.c_str() );
 
     resolver.Resolve( garbage_hostname );
 

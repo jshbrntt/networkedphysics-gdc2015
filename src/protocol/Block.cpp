@@ -17,7 +17,7 @@ namespace protocol
         CORE_ASSERT( bytes > 0 );
         m_allocator = &allocator;
         m_data = (uint8_t*) allocator.Allocate( bytes );
-//            printf( "allocate block data %p (%d)\n", m_data, bytes );
+        printf( "allocate block data %p (%d)\n", m_data, bytes );
         m_size = bytes;
         CORE_ASSERT( m_data );
     }
@@ -55,7 +55,7 @@ namespace protocol
     {
         if ( !m_data )
             return;
-//          printf( "free block data %p (%d)\n", m_data, m_size );
+        printf( "free block data %p (%d)\n", m_data, m_size );
         CORE_ASSERT( m_allocator );
         CORE_ASSERT( m_size > 0 );
         m_allocator->Free( m_data );

@@ -1,7 +1,7 @@
 /*
-	Networked Physics Demo
-	Copyright © 2008-2015 Glenn Fiedler
-	http://www.gafferongames.com/networking-for-game-programmers
+    Networked Physics Demo
+    Copyright © 2008-2015 Glenn Fiedler
+    http://www.gafferongames.com/networking-for-game-programmers
 */
 
 #ifndef CUBES_ACTIVATION_H
@@ -16,569 +16,565 @@
 
 namespace activation
 {
-	typedef uint32_t ObjectId;
-	typedef uint32_t ActiveId;
+    typedef uint32_t ObjectId;
+    typedef uint32_t ActiveId;
 
-	/*
-		The activation system divides the world up into grid cells.
-		This is the per-object entry for an object inside a cell.
-	*/
-	
-	struct CellObject
-	{
-		uint32_t id : 20;
-		uint32_t active : 1;
-		uint32_t disabled : 1;
-		uint32_t activeObjectIndex : 10;
-		float x,y;
-		#ifdef VALIDATION
- 		int cellIndex;
-		void Clear()
-		{
-			id = 0;
-			active = 0;
-			disabled = 0;
-			activeObjectIndex = 0;
-			cellIndex = -1;
-			x = 0.0f;
-			y = 0.0f;
-		}
-		#endif
-	};
+    /*
+        The activation system divides the world up into grid cells.
+        This is the per-object entry for an object inside a cell.
+    */
 
-	/*
-		Objects inside the player activation circle are activated.
-		This is the activation system data per active object.
-	*/
-	
-	struct ActiveObject
-	{
- 		uint32_t id : 20;
-		uint32_t cellIndex : 20;
- 		uint32_t cellObjectIndex : 12;
-		uint32_t pendingDeactivation : 1;
-		float pendingDeactivationTime;					// TODO - convert to n bits frame counter
+    struct CellObject
+    {
+        uint32_t id : 20;
+        uint32_t active : 1;
+        uint32_t disabled : 1;
+        uint32_t activeObjectIndex : 10;
+        float x, y;
+#ifdef VALIDATION
+        int cellIndex;
+        void Clear()
+        {
+            id = 0;
+            active = 0;
+            disabled = 0;
+            activeObjectIndex = 0;
+            cellIndex = -1;
+            x = 0.0f;
+            y = 0.0f;
+        }
+#endif
+    };
 
-		#ifdef VALIDATION
-		void Clear()
-		{
-			id = 0;
-			pendingDeactivation = 0;
-			pendingDeactivationTime = 0;
-			cellIndex = 0;
-			cellObjectIndex = 0;
-		}
-		#endif
-	};
+    /*
+        Objects inside the player activation circle are activated.
+        This is the activation system data per active object.
+    */
 
-	/*
-		The set template is used by game code to maintain
-		sets of objects. Objects are unordered and deletion
-		is implemented by replacing the deleted item with the last.
-	*/
-	
-	template <typename T> class Set
-	{
-	public:
+    struct ActiveObject
+    {
+        uint32_t id : 20;
+        uint32_t cellIndex : 20;
+        uint32_t cellObjectIndex : 12;
+        uint32_t pendingDeactivation : 1;
+        float pendingDeactivationTime; // TODO - convert to n bits frame counter
 
-		Set()
-		{
-			count = 0;
-			size = 0;
-			ids = NULL;
-			objects = NULL;
-		}
+#ifdef VALIDATION
+        void Clear()
+        {
+            id = 0;
+            pendingDeactivation = 0;
+            pendingDeactivationTime = 0;
+            cellIndex = 0;
+            cellObjectIndex = 0;
+        }
+#endif
+    };
 
-		~Set()
-		{
-			Free();
-		}
+    /*
+        The set template is used by game code to maintain
+        sets of objects. Objects are unordered and deletion
+        is implemented by replacing the deleted item with the last.
+    */
 
-		void Allocate( int initialSize )
-		{
-			assert( objects == NULL );
-			assert( initialSize > 0 );
-			ids = new uint32_t[initialSize];
-			objects = new T[initialSize];
-			size = initialSize;
-			count = 0;
-		}
-		
-		void Free()
-		{
-			delete [] objects;
-			delete [] ids;
-			objects = NULL;
-			count = 0;
-			size = 0;
-		}
+    template <typename T>
+    class Set
+    {
+    public:
+        Set()
+        {
+            count = 0;
+            size = 0;
+            ids = NULL;
+            objects = NULL;
+        }
 
-		void Clear()
-		{
-			count = 0;
-		}
+        ~Set()
+        {
+            Free();
+        }
 
- 		T & InsertObject( ObjectId id )
-		{
-			if ( count >= size )
-				Grow();
-			ids[count] = id;
-			return objects[count++];
-		}
+        void Allocate(int initialSize)
+        {
+            assert(objects == NULL);
+            assert(initialSize > 0);
+            ids = new uint32_t[initialSize];
+            objects = new T[initialSize];
+            size = initialSize;
+            count = 0;
+        }
 
-		void DeleteObject( ObjectId id )
-		{
-			assert( count >= 1 );
-			for ( int i = 0; i < count; ++i )
-			{
-				if ( objects[i].id == id )
-				{
-					DeleteObject( i );
-					return;
-				}
-			}
-			assert( false );
-		}
-		
-		void DeleteObject( T * object )
-		{
-			int index = object - &objects[0];
-			DeleteObject( index );
-		}
+        void Free()
+        {
+            delete[] objects;
+            delete[] ids;
+            objects = NULL;
+            count = 0;
+            size = 0;
+        }
 
-		void DeleteObject( int index )
-		{
-			assert( count >= 1 );
-			
-			// delete object
-			assert( index >= 0 );
-			assert( index < count );
-			int last = count - 1;
-			if ( index != last )
-			{
-				ids[index] = ids[last];
-				objects[index] = objects[last];
-			}
-			count--;
-			if ( count < size/3 )
-				Shrink();
-		}
+        void Clear()
+        {
+            count = 0;
+        }
 
- 		T & GetObject( int index )
-		{
-			if ( index >= count )
-			{
-				printf( "index = %d, count = %d\n", index, count );
-			}
-			assert( index >= 0 );
-			assert( index < count );
-			return objects[index];
-		}
+        T &InsertObject(ObjectId id)
+        {
+            if (count >= size)
+                Grow();
+            ids[count] = id;
+            return objects[count++];
+        }
 
- 		T * FindObject( ObjectId id )
-		{
-			for ( int i = 0; i < count; ++i )
-				if ( ids[i] == id )
-					return &objects[i];
-			return NULL;
-		}
+        void DeleteObject(ObjectId id)
+        {
+            assert(count >= 1);
+            for (int i = 0; i < count; ++i)
+            {
+                if (objects[i].id == id)
+                {
+                    DeleteObject(i);
+                    return;
+                }
+            }
+            assert(false);
+        }
 
-	 	const T * FindObject( ObjectId id ) const
-		{
-			for ( int i = 0; i < count; ++i )
-				if ( ids[i] == id )
-					return &objects[i];
-			return NULL;
-		}
+        void DeleteObject(T *object)
+        {
+            int index = object - &objects[0];
+            DeleteObject(index);
+        }
 
-		int GetCount() const
-		{
-			return count;
-		}
-		
-		int GetSize() const
-		{
-			return size;
-		}
-		
-		int GetBytes() const
-		{
-			return sizeof(T) * size;
-		}
-		
-	protected:
+        void DeleteObject(int index)
+        {
+            assert(count >= 1);
 
-		void Grow()
-		{
-//			printf( "grow %d -> %d\n", size, size*2 );
-			size *= 2;
-			uint32_t * oldIds = ids;
-			T * oldObjects = objects;
-			ids = new uint32_t[size];
-			objects = new T[size];
-			memcpy( &ids[0], &oldIds[0], sizeof(int)*count );
-			memcpy( &objects[0], &oldObjects[0], sizeof(T)*count );
-			delete[] oldIds;
-			delete[] oldObjects;
-		}
+            // delete object
+            assert(index >= 0);
+            assert(index < count);
+            int last = count - 1;
+            if (index != last)
+            {
+                ids[index] = ids[last];
+                objects[index] = objects[last];
+            }
+            count--;
+            if (count < size / 3)
+                Shrink();
+        }
 
-		void Shrink()
-		{
-//			printf( "shrink %d -> %d\n", size, size / 2 );
-			size /= 2;
-			assert( count <= size );
-			assert( size >= 1 );
-			uint32_t * oldIds = ids;
-			T * oldObjects = objects;
- 			ids = new uint32_t[size];
-			objects = new T[size];
-			memcpy( &ids[0], &oldIds[0], sizeof(int)*count );
-			memcpy( &objects[0], &oldObjects[0], sizeof(T)*count );
-			delete[] oldIds;
-			delete[] oldObjects;
-		}
+        T &GetObject(int index)
+        {
+            if (index >= count)
+            {
+                printf("index = %d, count = %d\n", index, count);
+            }
+            assert(index >= 0);
+            assert(index < count);
+            return objects[index];
+        }
 
-		int count;
-		int size;
-		uint32_t * ids;
-		T * objects;
-	};
+        T *FindObject(ObjectId id)
+        {
+            for (int i = 0; i < count; ++i)
+                if (ids[i] == id)
+                    return &objects[i];
+            return NULL;
+        }
 
-	/*
-		A set of cell objects.
-		Special handling is required when deleting an object
-		to keep the active object "cellObjectIndex" up to date
-		when the last item is moved into the deleted object slot.
-	*/
-	
-	class CellObjectSet : public Set<CellObject>
-	{
-	public:
+        const T *FindObject(ObjectId id) const
+        {
+            for (int i = 0; i < count; ++i)
+                if (ids[i] == id)
+                    return &objects[i];
+            return NULL;
+        }
 
-		void DeleteObject( ActiveObject * activeObjects, ObjectId id );
+        int GetCount() const
+        {
+            return count;
+        }
 
-		void DeleteObject( ActiveObject * activeObjects, CellObject & cellObject );
-		
-		const CellObject * GetObjectArray() const
-		{
-			return &objects[0];
-		}
-		
-	private:
-		
-		void DeleteObject( ObjectId id );
-		void DeleteObject( CellObject * object );
-	};
-	
-	/*
-		Each cell contains a number of objects.
-		By keeping track of which objects are in a cell,
-		we can activate/deactivate objects with cost proportional
-		to the number of grid cells overlapping the activation circle.
-	*/
-	
-	struct Cell
-	{
-		#ifdef DEBUG
-		int index;
-		#endif
-		int ix,iy;
-		float x1,y1,x2,y2;
-		CellObjectSet objects;
+        int GetSize() const
+        {
+            return size;
+        }
 
-	#ifdef DEBUG
+        int GetBytes() const
+        {
+            return sizeof(T) * size;
+        }
 
-		static void ValidateCellObject( Cell * cells, ActiveObject * activeObjects, const CellObject & cellObject );
-		static void ValidateActiveObject( Cell * cells, ActiveObject * activeObjects, const ActiveObject & activeObject );
+    protected:
+        void Grow()
+        {
+            printf("grow %d -> %d\n", size, size * 2);
+            size *= 2;
+            uint32_t *oldIds = ids;
+            T *oldObjects = objects;
+            ids = new uint32_t[size];
+            objects = new T[size];
+            memcpy(&ids[0], &oldIds[0], sizeof(int) * count);
+            memcpy(&objects[0], &oldObjects[0], sizeof(T) * count);
+            delete[] oldIds;
+            delete[] oldObjects;
+        }
 
-	#endif
-	
-		void Initialize( int initialObjectCount )
-		{
-			objects.Allocate( initialObjectCount );
-		}
+        void Shrink()
+        {
+            printf("shrink %d -> %d\n", size, size / 2);
+            size /= 2;
+            assert(count <= size);
+            assert(size >= 1);
+            uint32_t *oldIds = ids;
+            T *oldObjects = objects;
+            ids = new uint32_t[size];
+            objects = new T[size];
+            memcpy(&ids[0], &oldIds[0], sizeof(int) * count);
+            memcpy(&objects[0], &oldObjects[0], sizeof(T) * count);
+            delete[] oldIds;
+            delete[] oldObjects;
+        }
 
-		CellObject & InsertObject( Cell * cells, ActiveObject * activeObjects, ObjectId id, float x, float y );
+        int count;
+        int size;
+        uint32_t *ids;
+        T *objects;
+    };
 
-		void DeleteObject( ActiveObject * activeObjects, ObjectId id )
-		{
-			objects.DeleteObject( activeObjects, id );
-		}
+    /*
+        A set of cell objects.
+        Special handling is required when deleting an object
+        to keep the active object "cellObjectIndex" up to date
+        when the last item is moved into the deleted object slot.
+    */
 
-		void DeleteObject( ActiveObject * activeObjects, CellObject & cellObject )
-		{
-			objects.DeleteObject( activeObjects, cellObject );
-		}
+    class CellObjectSet : public Set<CellObject>
+    {
+    public:
+        void DeleteObject(ActiveObject *activeObjects, ObjectId id);
 
-		CellObject & GetObject( int index )
-		{
-			return objects.GetObject( index );
-		}
+        void DeleteObject(ActiveObject *activeObjects, CellObject &cellObject);
 
-		CellObject * FindObject( ObjectId id )
-		{
-			return objects.FindObject( id );
-		}
+        const CellObject *GetObjectArray() const
+        {
+            return &objects[0];
+        }
 
-	 	const CellObject * FindObject( ObjectId id ) const
-		{
-			return objects.FindObject( id );
-		}
+    private:
+        void DeleteObject(ObjectId id);
+        void DeleteObject(CellObject *object);
+    };
 
-		int GetObjectCount()
-		{
-			return objects.GetCount();
-		}
-		
-		int GetCellObjectIndex( const CellObject & cellObject ) const
-		{
-			int index = (int) ( &cellObject - objects.GetObjectArray() );
-			assert( index >= 0 );
-			assert( index < objects.GetCount() );
-			return index;
-		}
-	};
+    /*
+        Each cell contains a number of objects.
+        By keeping track of which objects are in a cell,
+        we can activate/deactivate objects with cost proportional
+        to the number of grid cells overlapping the activation circle.
+    */
 
-	/*
-		Set of active objects.
-		We use this to store the set of active objects.
-		The set of active objects is a subset of all objects
-		in the world corresponding to the objects which are
-		currently inside the activation circle of the player.
-	*/
-	
-	class ActiveObjectSet : public Set<ActiveObject>
-	{
-	public:
+    struct Cell
+    {
+#ifdef DEBUG
+        int index;
+#endif
+        int ix, iy;
+        float x1, y1, x2, y2;
+        CellObjectSet objects;
 
-		void DeleteObject( Cell * cells, ObjectId id );
+#ifdef DEBUG
 
-		void DeleteObject( Cell * cells, ActiveObject & activeObject );
-		
-		ActiveObject * GetObjectArray()
-		{
-			return &objects[0];
-		}
-		
-		int GetActiveObjectIndex( ActiveObject & activeObject )
-		{
-			int index = (int) ( &activeObject - &objects[0] );
-			assert( index >= 0 );
-			assert( index < count );
-			return index;
-		}
+        static void ValidateCellObject(Cell *cells, ActiveObject *activeObjects, const CellObject &cellObject);
+        static void ValidateActiveObject(Cell *cells, ActiveObject *activeObjects, const ActiveObject &activeObject);
 
-	private:
-		
-		void DeleteObject( ObjectId id );
-		void DeleteObject( ActiveObject * object );
-	};
-	
-	/*
-		Activation events are sent when objects activate or deactivate. 
-		They let an external system track object activation and deactivation 
-		so it can perform it's own activation functionality.
-	*/	
-	
-	struct Event
-	{
-		enum Type { Activate, Deactivate };
-		uint32_t type : 1;
-		uint32_t id : 31;
-	};
+#endif
 
-	/*
-		The activation system tracks which objects are in each grid cell,
-		and maintains the set of active objects for the local player.
-	*/
-	
-	class ActivationSystem
-	{
-	public:
+        void Initialize(int initialObjectCount)
+        {
+            objects.Allocate(initialObjectCount);
+        }
 
-		typedef std::vector<Event> Events;
+        CellObject &InsertObject(Cell *cells, ActiveObject *activeObjects, ObjectId id, float x, float y);
 
-		ActivationSystem( int maxObjects, float radius, int width, int height, float size, int initialObjectsPerCell, int initialActiveObjects, float deactivationTime = 0.0f );
-		~ActivationSystem();
+        void DeleteObject(ActiveObject *activeObjects, ObjectId id)
+        {
+            objects.DeleteObject(activeObjects, id);
+        }
 
-		void SetEnabled( bool enabled );
-		
-		void Update( float deltaTime );
+        void DeleteObject(ActiveObject *activeObjects, CellObject &cellObject)
+        {
+            objects.DeleteObject(activeObjects, cellObject);
+        }
 
-		void MoveActivationPoint( float new_x, float new_y );
-		
-		void InsertObject( ObjectId id, float x, float y );
+        CellObject &GetObject(int index)
+        {
+            return objects.GetObject(index);
+        }
 
-		// IMPORTANT: this is a slow function, use the active or database versions instead if you can
-		void MoveObject( ObjectId id, float new_x, float new_y );
-		
-		// these are much faster
-		void MoveActiveObject( int activeIndex, float new_x, float new_y );
- 		void MoveDatabaseObject( ObjectId id, float new_x, float new_y );
-		
-		ActiveObject & ActivateObject( CellObject & cellObject, Cell & cell );
+        CellObject *FindObject(ObjectId id)
+        {
+            return objects.FindObject(id);
+        }
 
-		void DeactivateObject( ActiveObject & activeObject );
-		
-		void EnableObject( ObjectId objectId );
-		void DisableObject( ObjectId objectId );
+        const CellObject *FindObject(ObjectId id) const
+        {
+            return objects.FindObject(id);
+        }
 
-		void QueueObjectForDeactivation( ActiveObject & activeObject, bool immediate = false );
+        int GetObjectCount()
+        {
+            return objects.GetCount();
+        }
 
-		int GetEventCount();
+        int GetCellObjectIndex(const CellObject &cellObject) const
+        {
+            int index = (int)(&cellObject - objects.GetObjectArray());
+            assert(index >= 0);
+            assert(index < objects.GetCount());
+            return index;
+        }
+    };
 
-		const Event & GetEvent( int index );
+    /*
+        Set of active objects.
+        We use this to store the set of active objects.
+        The set of active objects is a subset of all objects
+        in the world corresponding to the objects which are
+        currently inside the activation circle of the player.
+    */
 
-		void ClearEvents();
+    class ActiveObjectSet : public Set<ActiveObject>
+    {
+    public:
+        void DeleteObject(Cell *cells, ObjectId id);
 
-		void Validate();
+        void DeleteObject(Cell *cells, ActiveObject &activeObject);
 
-	public:
-	
-		float GetBoundX() const
-		{
-			return bound_x;
-		}
+        ActiveObject *GetObjectArray()
+        {
+            return &objects[0];
+        }
 
-		float GetBoundY() const
-		{
-			return bound_y;
-		}
+        int GetActiveObjectIndex(ActiveObject &activeObject)
+        {
+            int index = (int)(&activeObject - &objects[0]);
+            assert(index >= 0);
+            assert(index < count);
+            return index;
+        }
 
-		void Clamp( math::Vector & position )
-		{
-			position.x = math::clamp( position.x, -bound_x, +bound_x );
-			position.y = math::clamp( position.y, -bound_y, +bound_y );
-		}
-		
-		float GetX() const
-		{
-			return activation_x;
-		}
+    private:
+        void DeleteObject(ObjectId id);
+        void DeleteObject(ActiveObject *object);
+    };
 
-		float GetY() const
-		{
-			return activation_y;
-		}
+    /*
+        Activation events are sent when objects activate or deactivate.
+        They let an external system track object activation and deactivation
+        so it can perform it's own activation functionality.
+    */
 
-		int GetActiveCount() const
-		{
-			return active_objects.GetCount();
-		}
+    struct Event
+    {
+        enum Type
+        {
+            Activate,
+            Deactivate
+        };
+        uint32_t type : 1;
+        uint32_t id : 31;
+    };
 
-		bool IsActive( ObjectId id ) const
-		{
-			return active_objects.FindObject( id ) != NULL;
-		}
-		
-		bool IsPendingDeactivation( int activeIndex )
-		{
-			ActiveObject & activeObject = active_objects.GetObject( activeIndex );
-			return activeObject.pendingDeactivation;
-		}
+    /*
+        The activation system tracks which objects are in each grid cell,
+        and maintains the set of active objects for the local player.
+    */
 
-		Cell * GetCellAtIndex( int ix, int iy )
-		{
-			assert( ix >= 0 );
-			assert( iy >= 0 );
-			assert( ix < width );
-			assert( iy < height );
-			int index = ix + iy * width;
-			return &cells[index];
-		}
+    class ActivationSystem
+    {
+    public:
+        typedef std::vector<Event> Events;
 
-		int GetWidth() const
-		{
-			return width;
-		}
+        ActivationSystem(int maxObjects, float radius, int width, int height, float size, int initialObjectsPerCell, int initialActiveObjects, float deactivationTime = 0.0f);
+        ~ActivationSystem();
 
-		int GetHeight() const
-		{
-			return height;
-		}
+        void SetEnabled(bool enabled);
 
-		float GetCellSize() const
-		{
-			return size;
-		}
+        void Update(float deltaTime);
 
-		bool IsEnabled() const
-		{
-			return enabled;
-		}
-		
-		int GetBytes() const
-		{
-			return sizeof( ActivationSystem ) + width * height * ( sizeof( Cell ) + sizeof( CellObject ) * initial_objects_per_cell ) + maxObjects * sizeof( int );
-		}
+        void MoveActivationPoint(float new_x, float new_y);
+
+        void InsertObject(ObjectId id, float x, float y);
+
+        // IMPORTANT: this is a slow function, use the active or database versions instead if you can
+        void MoveObject(ObjectId id, float new_x, float new_y);
+
+        // these are much faster
+        void MoveActiveObject(int activeIndex, float new_x, float new_y);
+        void MoveDatabaseObject(ObjectId id, float new_x, float new_y);
+
+        ActiveObject &ActivateObject(CellObject &cellObject, Cell &cell);
+
+        void DeactivateObject(ActiveObject &activeObject);
+
+        void EnableObject(ObjectId objectId);
+        void DisableObject(ObjectId objectId);
+
+        void QueueObjectForDeactivation(ActiveObject &activeObject, bool immediate = false);
+
+        int GetEventCount();
+
+        const Event &GetEvent(int index);
+
+        void ClearEvents();
+
+        void Validate();
+
+    public:
+        float GetBoundX() const
+        {
+            return bound_x;
+        }
+
+        float GetBoundY() const
+        {
+            return bound_y;
+        }
+
+        void Clamp(math::Vector &position)
+        {
+            position.x = math::clamp(position.x, -bound_x, +bound_x);
+            position.y = math::clamp(position.y, -bound_y, +bound_y);
+        }
+
+        float GetX() const
+        {
+            return activation_x;
+        }
+
+        float GetY() const
+        {
+            return activation_y;
+        }
+
+        int GetActiveCount() const
+        {
+            return active_objects.GetCount();
+        }
+
+        bool IsActive(ObjectId id) const
+        {
+            return active_objects.FindObject(id) != NULL;
+        }
+
+        bool IsPendingDeactivation(int activeIndex)
+        {
+            ActiveObject &activeObject = active_objects.GetObject(activeIndex);
+            return activeObject.pendingDeactivation;
+        }
+
+        Cell *GetCellAtIndex(int ix, int iy)
+        {
+            assert(ix >= 0);
+            assert(iy >= 0);
+            assert(ix < width);
+            assert(iy < height);
+            int index = ix + iy * width;
+            return &cells[index];
+        }
+
+        int GetWidth() const
+        {
+            return width;
+        }
+
+        int GetHeight() const
+        {
+            return height;
+        }
+
+        float GetCellSize() const
+        {
+            return size;
+        }
+
+        bool IsEnabled() const
+        {
+            return enabled;
+        }
+
+        int GetBytes() const
+        {
+            return sizeof(ActivationSystem) + width * height * (sizeof(Cell) + sizeof(CellObject) * initial_objects_per_cell) + maxObjects * sizeof(int);
+        }
 
         void DumpInfo()
         {
-            printf( "------------------------------------\n" );
-            printf( "activation system:\n" );
-            printf( "cell = %d bytes\n", (int) sizeof( Cell ) );
-            printf( "cell object = %d bytes\n", (int) sizeof( CellObject ) );
-            printf( "cell array = %d bytes\n", (int) ( width * height * sizeof( Cell ) ) );
-            printf( "cell objects = %d bytes\n", (int) ( width * height * sizeof( CellObject ) * initial_objects_per_cell ) );
-            printf( "initial objects per-cell = %d\n", initial_objects_per_cell );
-            printf( "id to cell array = %d bytes\n", (int) ( maxObjects * sizeof( int ) ) );
-            printf( "------------------------------------\n" );
+            printf("------------------------------------\n");
+            printf("activation system:\n");
+            printf("cell = %d bytes\n", (int)sizeof(Cell));
+            printf("cell object = %d bytes\n", (int)sizeof(CellObject));
+            printf("cell array = %d bytes\n", (int)(width * height * sizeof(Cell)));
+            printf("cell objects = %d bytes\n", (int)(width * height * sizeof(CellObject) * initial_objects_per_cell));
+            printf("initial objects per-cell = %d\n", initial_objects_per_cell);
+            printf("id to cell array = %d bytes\n", (int)(maxObjects * sizeof(int)));
+            printf("------------------------------------\n");
         }
 
-	protected:
+    protected:
+        void ActivateObjectsInsideCircle();
 
-		void ActivateObjectsInsideCircle();
+        void DeactivateAllObjects();
 
-		void DeactivateAllObjects();
+        Cell *CellAtPosition(float x, float y)
+        {
+            assert(x >= -bound_x);
+            assert(x <= +bound_x);
+            assert(y >= -bound_y);
+            assert(y <= +bound_y);
+            int ix = math::clamp((int)math::floor((x + bound_x) * inverse_size), 0, width - 1);
+            int iy = math::clamp((int)math::floor((y + bound_y) * inverse_size), 0, height - 1);
+            return &cells[iy * width + ix];
+        }
 
-		Cell * CellAtPosition( float x, float y )
-		{
-			assert( x >= -bound_x );
-			assert( x <= +bound_x );
-			assert( y >= -bound_y );
-			assert( y <= +bound_y );
-			int ix = math::clamp( (int) math::floor( ( x + bound_x ) * inverse_size ), 0, width - 1 );
-			int iy = math::clamp( (int) math::floor( ( y + bound_y ) * inverse_size ), 0, height - 1 );
-			return &cells[iy*width+ix];
-		}
+        void QueueActivationEvent(ObjectId id)
+        {
+            Event event;
+            event.type = Event::Activate;
+            event.id = id;
+            activation_events.push_back(event);
+        }
 
-		void QueueActivationEvent( ObjectId id )
-		{
-			Event event;
-			event.type = Event::Activate;
-			event.id = id;
-			activation_events.push_back( event );
-		}
+        void QueueDeactivationEvent(ObjectId id)
+        {
+            Event event;
+            event.type = Event::Deactivate;
+            event.id = id;
+            activation_events.push_back(event);
+        }
 
-		void QueueDeactivationEvent( ObjectId id )
-		{
-			Event event;
-			event.type = Event::Deactivate;
-			event.id = id;
-			activation_events.push_back( event );
-		}
-
-		bool active;
-		bool enabled;
-		bool enabled_last_frame;
-		int width;
-		int height;
-		int maxObjects;
-		int initial_objects_per_cell;
-		float activation_x;
-		float activation_y;
-		float activation_radius;
-		float activation_radius_squared;
-		float size;
-		float deactivationTime;
-		float inverse_size;
-		float bound_x;
-		float bound_y;
-		Cell * cells;
- 		int * idToCellIndex;
-		Events activation_events;
-		ActiveObjectSet active_objects;
-	};
+        bool active;
+        bool enabled;
+        bool enabled_last_frame;
+        int width;
+        int height;
+        int maxObjects;
+        int initial_objects_per_cell;
+        float activation_x;
+        float activation_y;
+        float activation_radius;
+        float activation_radius_squared;
+        float size;
+        float deactivationTime;
+        float inverse_size;
+        float bound_x;
+        float bound_y;
+        Cell *cells;
+        int *idToCellIndex;
+        Events activation_events;
+        ActiveObjectSet active_objects;
+    };
 }
 
 #endif

@@ -135,7 +135,7 @@ namespace protocol
         CORE_ASSERT( packet );
         CORE_ASSERT( packet->GetType() == CONNECTION_PACKET );
 
-//            printf( "read packet %d\n", (int) packet->sequence );
+        printf( "read packet %d\n", (int) packet->sequence );
 
         ProcessAcks( packet->ack, packet->ack_bits );
 
@@ -172,7 +172,7 @@ namespace protocol
 
     void Connection::ProcessAcks( uint16_t ack, uint32_t ack_bits )
     {
-//            printf( "process acks: %d - %x\n", (int)ack, ack_bits );
+        printf( "process acks: %d - %x\n", (int)ack, ack_bits );
 
         for ( int i = 0; i < 32; ++i )
         {
@@ -192,7 +192,7 @@ namespace protocol
 
     void Connection::PacketAcked( uint16_t sequence )
     {
-//            printf( "packet %d acked\n", (int) sequence );
+        printf( "packet %d acked\n", (int) sequence );
 
         m_counters[CONNECTION_COUNTER_PACKETS_ACKED]++;
 

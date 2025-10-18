@@ -16,7 +16,7 @@ static StoneData * LoadStoneData( core::Allocator & allocator, const char * file
 {
     CORE_ASSERT( filename );
 
-//    printf( "%.3f: Loading stone data: \"%s\"\n", global.timeBase.time, filename );
+    printf( "%.3f: Loading stone data: \"%s\"\n", global.timeBase.time, filename );
 
     FILE * file = fopen( filename, "rb" );
     if ( !file )
@@ -122,7 +122,7 @@ void StoneManager::Unload()
     for ( auto itor = core::hash::begin( m_stones ); itor != core::hash::end( m_stones ); ++itor )
     {
         StoneData * stoneData = itor->value;
-//        printf( "%.3f: Delete stone %p\n", global.timeBase.time, stoneData );
+        printf( "%.3f: Delete stone %p\n", global.timeBase.time, stoneData );
         CORE_DELETE( *m_allocator, StoneData, stoneData );
     }
  

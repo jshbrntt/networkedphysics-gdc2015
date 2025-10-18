@@ -9,7 +9,7 @@ namespace protocol
     ReliableMessageChannelData::ReliableMessageChannelData( const ReliableMessageChannelConfig & _config ) 
         : config( _config ), numMessages(0), fragmentId(0), blockSize(0), blockId(0), largeBlock(0)
     {
-//      printf( "create reliable message channel data: %p\n", this );
+        printf( "create reliable message channel data: %p\n", this );
     }
 
     ReliableMessageChannelData::~ReliableMessageChannelData()
@@ -281,7 +281,7 @@ namespace protocol
     {
         CORE_ASSERT( message );
 
-//      printf( "queue message for send: %d\n", m_sendMessageId );
+        printf( "queue message for send: %d\n", m_sendMessageId );
 
         CORE_ASSERT( CanSendMessage() );
 
@@ -334,7 +334,7 @@ namespace protocol
             
             entry->measuredBits = measureStream.GetBitsProcessed() + m_messageOverheadBits;
 
-//              printf( "message %d is %d bits\n", (int) m_sendMessageId, entity->measuredBits );
+            printf( "message %d is %d bits\n", (int) m_sendMessageId, entry->measuredBits );
         }
 
         m_counters[RELIABLE_MESSAGE_CHANNEL_COUNTER_MESSAGES_SENT]++;
@@ -344,7 +344,7 @@ namespace protocol
 
     void ReliableMessageChannel::SendBlock( Block & block )
     {
-//            printf( "send block: %d bytes\n", block->size() );
+        printf( "send block: %d bytes\n", block.GetSize() );
 
         auto blockMessage = (BlockMessage*) m_config.messageFactory->Create( BlockMessageType );
         CORE_ASSERT( blockMessage );
@@ -366,7 +366,7 @@ namespace protocol
         CORE_ASSERT( message->GetId() == m_receiveMessageId );
         #endif
 
-//            printf( "dequeue for receive: %d\n", message->GetId() );
+        printf( "dequeue for receive: %d\n", message->GetId() );
 
         m_receiveQueue->Remove( m_receiveMessageId );
 
@@ -416,7 +416,7 @@ namespace protocol
                 m_sendLargeBlock.numFragments = (int) ceil( block.GetSize() / (float)m_config.blockFragmentSize );
                 m_sendLargeBlock.numAckedFragments = 0;
 
-//                    printf( "sending block %d in %d fragments\n", (int) firstMessageId, m_sendLargeBlock.numFragments );
+                printf( "sending block %d in %d fragments\n", (int) firstEntry->message->GetId(), m_sendLargeBlock.numFragments );
 
                 CORE_ASSERT( m_sendLargeBlock.numFragments >= 0 );
                 CORE_ASSERT( m_sendLargeBlock.numFragments <= m_maxBlockFragments );
@@ -444,7 +444,7 @@ namespace protocol
             if ( fragmentId == -1 )
                 return nullptr;
 
-//                printf( "sending fragment %d\n", (int) fragmentId );
+            printf( "sending fragment %d\n", (int) fragmentId );
 
             auto data = CORE_NEW( core::memory::scratch_allocator(), ReliableMessageChannelData, m_config );
             data->largeBlock = 1;
@@ -454,9 +454,9 @@ namespace protocol
             core::Allocator & a = core::memory::scratch_allocator();
             data->fragment = (uint8_t*) a.Allocate( m_config.blockFragmentSize );
             CORE_ASSERT( data->fragment );
-//                printf( "allocate fragment %p (send fragment)\n", data->fragment );
+            printf( "allocate fragment %p (send fragment)\n", data->fragment );
 
-            //printf( "create fragment %p\n", data->fragment );
+            printf( "create fragment %p\n", data->fragment );
 
             int fragmentBytes = m_config.blockFragmentSize;
             int fragmentRemainder = block.GetSize() % m_config.blockFragmentSize;
@@ -560,7 +560,7 @@ namespace protocol
 
             data->messages = (Message**) allocator.Allocate( numMessageIds * sizeof( Message* ) );
             CORE_ASSERT( data->messages );
-//                printf( "allocate messages %p (get data)\n", data->messages );
+            printf( "allocate messages %p (get data)\n", data->messages );
             data->numMessages = numMessageIds;
             for ( int i = 0; i < numMessageIds; ++i )
             {
@@ -571,7 +571,7 @@ namespace protocol
                 m_config.messageFactory->AddRef( entry->message );
             }
 
-//                printf( "sent %d messages in packet\n", data->messages.size() );
+            printf( "sent %d messages in packet\n", data->numMessages );
 
             return data;
         }
@@ -581,11 +581,11 @@ namespace protocol
     {
         CORE_ASSERT( channelData );
 
-//          printf( "process data %d\n", sequence );
+        printf( "process data %d\n", sequence );
 
         auto data = static_cast<ReliableMessageChannelData*>( channelData );
 
-//            printf( "process message channel data: %d\n", sequence );
+        printf( "process message channel data: %d\n", sequence );
 
         /*
             IMPORTANT: If this is a large block but the message id is *older*
@@ -613,7 +613,7 @@ namespace protocol
 
         if ( !data->largeBlock && m_receiveLargeBlock.active )
         {
-//                printf( "received unexpected bitpacked message or small block while receiving large block\n" );
+            printf( "received unexpected bitpacked message or small block while receiving large block\n" );
             return false;
         }
 
@@ -633,7 +633,7 @@ namespace protocol
 
                 if ( data->blockId != expectedBlockId )
                 {
-//                        printf( "unexpected large block id\n" );
+                    printf( "unexpected large block id\n" );
                     return false;
                 }
 
@@ -644,11 +644,11 @@ namespace protocol
 
                 if ( numFragments < 0 || numFragments > m_maxBlockFragments )
                 {
-                    //printf( "large block num fragments outside of range\n" );
+                    printf( "large block num fragments outside of range\n" );
                     return false;
                 }
 
-//                    printf( "receiving large block %d (%d bytes)\n", data->blockId, data->blockSize );
+                printf( "receiving large block %d (%d bytes)\n", data->blockId, data->blockSize );
 
                 m_receiveLargeBlock.active = true;
                 m_receiveLargeBlock.numFragments = numFragments;
@@ -667,7 +667,7 @@ namespace protocol
 
             if ( data->blockId != m_receiveLargeBlock.blockId )
             {
-//                    printf( "unexpected large block id. got %d but was expecting %d\n", data->blockId, m_receiveLargeBlock.blockId );
+                printf( "unexpected large block id. got %d but was expecting %d\n", data->blockId, m_receiveLargeBlock.blockId );
                 return false;
             }
 
@@ -677,19 +677,19 @@ namespace protocol
 
             if ( data->blockId != m_receiveLargeBlock.blockId )
             {
-//                    printf( "recieve large block id mismatch. got %d but was expecting %d\n", data->blockId, m_receiveLargeBlock.blockId );
+                printf( "recieve large block id mismatch. got %d but was expecting %d\n", data->blockId, m_receiveLargeBlock.blockId );
                 return false;
             }
 
             if ( data->blockSize != m_receiveLargeBlock.blockSize )
             {
-//                    printf( "large block size mismatch. got %d but was expecting %d\n", data->blockSize, m_receiveLargeBlock.blockSize );
+                printf( "large block size mismatch. got %d but was expecting %d\n", data->blockSize, m_receiveLargeBlock.blockSize );
                 return false;
             }
 
             if ( data->fragmentId >= m_receiveLargeBlock.numFragments )
             {
-//                    printf( "large block fragment out of bounds.\n" );
+                printf( "large block fragment out of bounds.\n" );
                 return false;
             }
 
@@ -709,7 +709,7 @@ namespace protocol
                 if ( fragmentRemainder && data->fragmentId == m_receiveLargeBlock.numFragments - 1 )
                     fragmentBytes = fragmentRemainder;
 
-//                    printf( "fragment bytes = %d\n", fragmentBytes );
+                printf( "fragment bytes = %d\n", fragmentBytes );
 
                 CORE_ASSERT( fragmentBytes >= 0 );
                 CORE_ASSERT( fragmentBytes <= m_config.blockFragmentSize );
@@ -721,7 +721,7 @@ namespace protocol
 
                 if ( m_receiveLargeBlock.numReceivedFragments == m_receiveLargeBlock.numFragments )
                 {
-//                        printf( "received large block %d (%d bytes)\n", m_receiveLargeBlock.blockId, m_receiveLargeBlock.block->size() );
+                    printf( "received large block %d (%d bytes)\n", m_receiveLargeBlock.blockId, m_receiveLargeBlock.block.GetSize() );
 
                     auto blockMessage = (BlockMessage*) m_config.messageFactory->Create( BlockMessageType );
                     CORE_ASSERT( blockMessage );
@@ -812,7 +812,7 @@ namespace protocol
 
     void ReliableMessageChannel::ProcessAck( uint16_t ack )
     {
-//            printf( "process ack: %d\n", (int) ack );
+        printf( "process ack: %d\n", (int) ack );
 
         auto sentPacket = m_sentPackets->Find( ack );
         if ( !sentPacket || sentPacket->acked )
@@ -831,7 +831,7 @@ namespace protocol
                     CORE_ASSERT( sendQueueEntry->message );
                     CORE_ASSERT( sendQueueEntry->message->GetId() == messageId );
 
-//                        printf( "acked message %d\n", messageId );
+                    printf( "acked message %d\n", messageId );
 
                     m_config.messageFactory->Release( sendQueueEntry->message );
 
@@ -858,7 +858,7 @@ namespace protocol
 
                 if ( m_sendLargeBlock.numAckedFragments == m_sendLargeBlock.numFragments )
                 {
-//                        printf( "acked large block %d\n", (int) m_sendLargeBlock.blockId );
+                    printf( "acked large block %d\n", (int) m_sendLargeBlock.blockId );
 
                     m_sendLargeBlock.active = false;
 

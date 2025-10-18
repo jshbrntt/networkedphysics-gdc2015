@@ -119,7 +119,7 @@ void MeshManager::Clear()
     for ( auto itor = core::hash::begin( m_meshes ); itor != core::hash::end( m_meshes ); ++itor )
     {
         Mesh * mesh = itor->value;
-//        printf( "%.3f: Delete mesh %p\n", global.timeBase.time, mesh );
+        printf( "%.3f: Delete mesh %p\n", global.timeBase.time, mesh );
         DestroyMesh( *m_allocator, mesh );
     }
  

@@ -285,7 +285,7 @@ namespace clientServer
         {
             auto packet = client.connection->WritePacket();
 
-                printf( "server sent connection packet\n" );
+            printf( "server sent connection packet\n" );
 
             packet->clientId = client.clientId;
             packet->serverId = client.serverId;

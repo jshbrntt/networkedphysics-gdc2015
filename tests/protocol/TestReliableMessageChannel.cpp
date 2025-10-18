@@ -333,7 +333,7 @@ void test_reliable_message_channel_large_blocks()
 
                 protocol::Block & block = blockMessage->GetBlock();
 
-//                printf( "received block %d (%d bytes)\n", blockMessage->GetId(), (int) block->size() );
+                printf( "received block %d (%d bytes)\n", blockMessage->GetId(), (int) block.GetSize() );
 
                 CORE_CHECK( block.GetSize() == ( numMessagesReceived + 1 ) * 64 + numMessagesReceived );
                 const uint8_t * data = block.GetData();
@@ -468,7 +468,7 @@ void test_reliable_message_channel_mixture()
 
                     protocol::Block & block = blockMessage->GetBlock();
 
-    //                printf( "received block %d (%d bytes)\n", blockMessage->GetId(), (int) block->size() );
+                    printf( "received block %d (%d bytes)\n", blockMessage->GetId(), (int) block.GetSize() );
 
                     CORE_CHECK( block.GetSize() == ( numMessagesReceived + 1 ) * 8 + numMessagesReceived );
                     const uint8_t * data = block.GetData();
@@ -479,7 +479,7 @@ void test_reliable_message_channel_mixture()
                 {
                     CORE_CHECK( message->GetType() == MESSAGE_TEST );
 
-    //                printf( "received message %d\n", message->GetId() );
+                    printf( "received message %d\n", message->GetId() );
 
                     auto testMessage = static_cast<TestMessage*>( message );
 

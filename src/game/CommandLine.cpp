@@ -27,7 +27,7 @@ void ProcessCommandLine()
 {
     // muahahaha I'm so lazy.
 
-//    printf( "command line: '%s'\n", buffer );
+    printf( "command line: '%s'\n", commandLineBuffer );
 
 #ifdef CLIENT
 

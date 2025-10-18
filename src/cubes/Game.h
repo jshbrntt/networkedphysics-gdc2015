@@ -207,7 +207,7 @@ namespace game
 		{
 			assert( !initialized );
 			initializing = true;
-//			printf( "initializing game world\n" );
+			printf( "initializing game world\n" );
 		}
 				
 		ObjectId AddObject( DatabaseObject & object, float x, float y )

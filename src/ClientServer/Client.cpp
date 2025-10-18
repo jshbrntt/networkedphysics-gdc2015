@@ -85,13 +85,14 @@ namespace clientServer
 
         OnConnect( address );
 
-//            printf( "client connect by address: %s\n", address.ToString().c_str() );
+        char buffer[256];
+        printf( "client connect by address: %s\n", address.ToString(buffer, sizeof( buffer )) );
 
         SetClientState( CLIENT_STATE_SENDING_CONNECTION_REQUEST );
         m_address = address;
         m_clientId = core::generate_id();
 
-//            printf( "connect: set client id = %x\n", m_clientId );
+        printf( "connect: set client id = %x\n", m_clientId );
 
         m_lastPacketReceiveTime = m_timeBase.time;          // IMPORTANT: otherwise times out immediately after connect once time value gets large
     }
@@ -143,7 +144,7 @@ namespace clientServer
         if ( IsDisconnected() )
             return;
 
-//            printf( "client disconnect\n" );
+        printf( "client disconnect\n" );
 
         auto packet = (DisconnectedPacket*) m_packetFactory->Create( CLIENT_SERVER_PACKET_DISCONNECTED );
 
@@ -292,18 +293,18 @@ namespace clientServer
 
         auto entry = m_config.resolver->GetEntry( m_hostname );
 
-//            printf( "update resolve hostname\n" );
+        printf( "update resolve hostname\n" );
 
         if ( !entry || entry->status == RESOLVE_FAILED )
         {
-//                printf( "resolve hostname failed\n" );
+            printf( "resolve hostname failed\n" );
             DisconnectAndSetError( CLIENT_ERROR_RESOLVE_HOSTNAME_FAILED );
             return;
         }
 
         if ( entry->status == RESOLVE_SUCCEEDED )
         {
-//                printf( "resolve hostname succeeded: %s\n", entry->result->addresses[0].ToString().c_str() );
+            printf( "resolve hostname succeeded: %s\n", entry->result->addresses[0].ToString().c_str() );
 
             auto address = entry->result.address[0];
 
@@ -398,7 +399,7 @@ namespace clientServer
 
             if ( type == CLIENT_SERVER_PACKET_DISCONNECTED )
             {
-//                    printf( "client received disconnected packet\n" );
+                printf( "client received disconnected packet\n" );
                 ProcessDisconnected( static_cast<DisconnectedPacket*>( packet ) );
                 m_packetFactory->Destroy( packet );
                 continue;
@@ -415,7 +416,7 @@ namespace clientServer
                         if ( connectionChallengePacket->GetAddress() == m_address &&
                              connectionChallengePacket->clientId == m_clientId )
                         {
-//                                printf( "received connection challenge packet from server\n" );
+                            printf( "received connection challenge packet from server\n" );
 
                             SetClientState( CLIENT_STATE_SENDING_CHALLENGE_RESPONSE );
 
@@ -446,7 +447,7 @@ namespace clientServer
                         if ( connectionDeniedPacket->GetAddress() == m_address &&
                              connectionDeniedPacket->clientId == m_clientId )
                         {
-//                                printf( "received connection denied packet from server\n" );
+                            printf( "received connection denied packet from server\n" );
 
                             DisconnectAndSetError( CLIENT_ERROR_CONNECTION_REQUEST_DENIED, connectionDeniedPacket->reason );
                         }
@@ -534,11 +535,11 @@ namespace clientServer
 
         CORE_ASSERT( m_dataBlockSender );
 
-//        printf( "update send client data\n" );
+        printf( "update send client data\n" );
 
         if ( m_dataBlockSender->SendCompleted() )
         {
-//            printf( "ready for connection\n" );
+            printf( "ready for connection\n" );
             SetClientState( CLIENT_STATE_READY_FOR_CONNECTION );
             return;
         }
@@ -594,7 +595,7 @@ namespace clientServer
     {
         CORE_ASSERT( packet );
 
-//        printf( "process fragment ack %d\n", packet->fragmentId );
+        printf( "process fragment ack %d\n", packet->fragmentId );
 
         if ( packet->clientId != m_clientId )
             return;
@@ -617,7 +618,7 @@ namespace clientServer
 
         if ( m_lastPacketReceiveTime + timeout < m_timeBase.time )
         {
-//                printf( "client timed out\n" );
+            printf( "client timed out\n" );
             DisconnectAndSetError( CLIENT_ERROR_CONNECTION_TIMED_OUT, m_state );
         }
     }

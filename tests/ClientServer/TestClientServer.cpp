@@ -360,7 +360,7 @@ void test_client_connection_request_denied()
             sleep_after_too_many_iterations( iteration );
         }
 
-    //    printf( "client error: %d\n", client.GetError() );
+        printf( "client error: %d\n", client.GetError() );
 
         CORE_CHECK( client.IsDisconnected() );
         CORE_CHECK( !client.IsConnecting() );

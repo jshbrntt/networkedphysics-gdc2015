@@ -744,8 +744,8 @@ struct DeltaSnapshotPacket : public protocol::Packet
 
                 QuantizedCubeState * quantized_base_cubes = nullptr;
 
-//                if ( Stream::IsWriting )
-//                    printf( "encoding snapshot %d relative to baseline %d\n", sequence, base_sequence );
+                if ( Stream::IsWriting )
+                    printf( "encoding snapshot %d relative to baseline %d\n", sequence, base_sequence );
 
                 if ( initial )
                 {
@@ -943,8 +943,8 @@ struct DeltaSnapshotPacket : public protocol::Packet
 
                     if ( relative_index_bits < 900 && num_changed <= MaxChanged )
                     {
-//                        if ( num_changed > 0 )
-//                            printf( "num changed: %d, relative index bits: %d (%.1f avg)\n", num_changed, relative_index_bits, relative_index_bits / float( num_changed ) );
+                        if ( num_changed > 0 )
+                            printf( "num changed: %d, relative index bits: %d (%.1f avg)\n", num_changed, relative_index_bits, relative_index_bits / float( num_changed ) );
 
                         use_indices = true;
                     }

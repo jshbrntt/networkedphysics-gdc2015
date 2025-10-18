@@ -360,7 +360,7 @@ namespace network
             CORE_ASSERT( packet->GetType() == packetType );
             if ( !packet )
             {
-//                printf( "failed to create packet of type %d\n", packetType );
+                printf( "failed to create packet of type %d\n", packetType );
                 m_counters[BSD_SOCKET_COUNTER_CREATE_PACKET_FAILURES]++;
                 continue;
             }

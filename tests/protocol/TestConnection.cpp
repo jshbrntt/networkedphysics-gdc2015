@@ -89,7 +89,7 @@ public:
 
     void ProcessAck( uint16_t ack )
     {
-//        printf( "acked %d\n", (int) ack );
+        printf( "acked %d\n", (int) ack );
         ackedPackets[ack] = true;
     }
 };
@@ -162,7 +162,7 @@ void test_acks()
                 {
                     uint16_t sequence = packet->sequence;
 
-        //            printf( "received %d\n", (int)sequence );
+                    printf( "received %d\n", (int)sequence );
 
                     receivedPackets[sequence] = true;
                 }
@@ -190,7 +190,7 @@ void test_acks()
         CORE_CHECK( numAckedPackets > 0 );
         CORE_CHECK( numReceivedPackets >= numAckedPackets );
 
-    //    printf( "%d packets received, %d packets acked\n", numReceivedPackets, numAckedPackets );
+        printf( "%d packets received, %d packets acked\n", numReceivedPackets, numAckedPackets );
     }
     core::memory::shutdown();
 }
