@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Client",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceRoot}/bin/Client",
+            "args": [],
+            "cwd": "${workspaceRoot}"
+        },
+        {
+            "name": "Server",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceRoot}/bin/Server",
+            "args": [],
+            "cwd": "${workspaceRoot}"
+        }
+    ]
+}
