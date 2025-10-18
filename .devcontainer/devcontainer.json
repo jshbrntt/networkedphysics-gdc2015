@@ -6,7 +6,8 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                "Anthropic.claude-code"
+                "Anthropic.claude-code",
+                "vadimcn.vscode-lldb"
             ]
         }
     }
