@@ -17,7 +17,7 @@ namespace clientServer
 
         m_allocator = m_config.allocator ? m_config.allocator : &core::memory::default_allocator();
 
-//            printf( "creating server with %d client slots\n", m_config.maxClients );
+        printf( "creating server with %d client slots\n", m_config.maxClients );
 
         m_packetFactory = &m_config.networkInterface->GetPacketFactory();
 
@@ -123,7 +123,7 @@ namespace clientServer
         if ( client.state == SERVER_CLIENT_STATE_DISCONNECTED )
             return;
 
-//            printf( "sent disconnected packet to client\n" );
+        printf( "sent disconnected packet to client\n" );
 
         auto packet = (DisconnectedPacket*) m_packetFactory->Create( CLIENT_SERVER_PACKET_DISCONNECTED );
 
@@ -276,7 +276,7 @@ namespace clientServer
 
         if ( client.connection->GetError() != protocol::CONNECTION_ERROR_NONE )
         {
-//            printf( "client connection is in error state\n" );
+            printf( "client connection is in error state\n" );
             ResetClientSlot( clientIndex );
             return;
         }
@@ -285,7 +285,7 @@ namespace clientServer
         {
             auto packet = client.connection->WritePacket();
 
-//                printf( "server sent connection packet\n" );
+                printf( "server sent connection packet\n" );
 
             packet->clientId = client.clientId;
             packet->serverId = client.serverId;
@@ -346,7 +346,7 @@ namespace clientServer
             if ( !packet )
                 break;
 
-//                printf( "server ;packet\n" );
+            printf( "server ;packet\n" );
 
             switch ( packet->GetType() )
             {
@@ -390,13 +390,13 @@ namespace clientServer
     {
         CORE_ASSERT( packet );
 
-        // printf( "server received connection request packet: clientGuid = %llx\n", packet->clientGuid );
+        printf( "server received connection request packet: clientId = %llx\n", packet->clientId );
 
         auto address = packet->GetAddress();
 
         if ( !m_open )
         {
-            // printf( "server is closed. denying connection request\n" );
+            printf( "server is closed. denying connection request\n" );
 
             auto connectionDeniedPacket = (ConnectionDeniedPacket*) m_packetFactory->Create( CLIENT_SERVER_PACKET_CONNECTION_DENIED );
             connectionDeniedPacket->clientId = packet->clientId;
@@ -410,7 +410,7 @@ namespace clientServer
         int clientIndex = FindClientSlot( address );
         if ( clientIndex != -1 && m_clients[clientIndex].clientId != packet->clientId )
         {
-            // printf( "client is already connected. denying connection request\n" );
+            printf( "client is already connected. denying connection request\n" );
             auto connectionDeniedPacket = (ConnectionDeniedPacket*) m_packetFactory->Create( CLIENT_SERVER_PACKET_CONNECTION_DENIED );
             connectionDeniedPacket->clientId = packet->clientId;
             connectionDeniedPacket->reason = CONNECTION_REQUEST_DENIED_ALREADY_CONNECTED;
@@ -420,14 +420,14 @@ namespace clientServer
 
         if ( FindClientSlot( address, packet->clientId ) != -1 )
         {
-            // printf( "ignoring connection request. client already has a slot\n" );
+            printf( "ignoring connection request. client already has a slot\n" );
             return;
         }
 
         clientIndex = FindFreeClientSlot();
         if ( clientIndex == -1 )
         {
-            // printf( "server is full. denying connection request\n" );
+            printf( "server is full. denying connection request\n" );
             auto connectionDeniedPacket = (ConnectionDeniedPacket*) m_packetFactory->Create( CLIENT_SERVER_PACKET_CONNECTION_DENIED );
             connectionDeniedPacket->clientId = packet->clientId;
             connectionDeniedPacket->reason = CONNECTION_REQUEST_DENIED_SERVER_FULL;
@@ -435,7 +435,7 @@ namespace clientServer
             return;
         }
 
-        // printf( "incoming client connection at index %d\n", clientIndex );
+        printf( "incoming client connection at index %d\n", clientIndex );
 
         CORE_ASSERT( clientIndex >= 0 );
         CORE_ASSERT( clientIndex < m_numClients );
@@ -523,7 +523,7 @@ namespace clientServer
         if ( !client.dataBlockReceiver )
             return;
 
-//        printf( "process data block fragment %d\n", packet->fragmentId );
+        printf( "process data block fragment %d\n", packet->fragmentId );
 
         bool receiveAlreadyCompleted = client.dataBlockReceiver->ReceiveCompleted();
 
@@ -633,7 +633,7 @@ namespace clientServer
 
     void Server::ResetClientSlot( int clientIndex )
     {
-//          printf( "reset client slot %d\n", clientIndex );
+        printf( "reset client slot %d\n", clientIndex );
 
         ClientData & client = m_clients[clientIndex];
 
