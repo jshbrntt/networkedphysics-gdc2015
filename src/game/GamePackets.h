@@ -24,7 +24,7 @@ class GamePacketFactory : public protocol::PacketFactory
 public:
 
     GamePacketFactory( core::Allocator & allocator )
-        : PacketFactory( allocator, NUM_PACKET_TYPES )
+        : PacketFactory( allocator, clientServer::NUM_CLIENT_SERVER_NUM_PACKETS )
     {
         m_allocator = &allocator;
     }
