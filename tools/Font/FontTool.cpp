@@ -1,6 +1,5 @@
 #include "core/Core.h"
 #include "core/File.h"
-#include <jansson.h>
 
 // NOTE: disabled because currently broken on MacOSX:
 // error: 'config/ftheader.h' file not found with <angled> include; use "quotes" instead

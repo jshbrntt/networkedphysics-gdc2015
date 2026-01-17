@@ -127,10 +127,11 @@ void CubesInternal::AddCube( GameInstance * game_instance, int player, const vec
         game_instance->DisableObject( id );
 }
 
-extern "C" 
+extern "C"
 {
-    extern unsigned long dRandGetSeed();
-    extern void dRandSetSeed( unsigned int seed );
+    static unsigned long ode_rand_seed = 0;
+    unsigned long dRandGetSeed() { return ode_rand_seed; }
+    void dRandSetSeed( unsigned int seed ) { ode_rand_seed = seed; }
 }
 
 void CubesInternal::Update( const CubesUpdateConfig & update_config )

@@ -1,19 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
 project(Protocol)
 
-# Option to choose physics engine
-option(USE_JOLT_PHYSICS "Use Jolt Physics instead of ODE" ON)
-
 # Set C++ standard
 find_package(Jolt REQUIRED)
 
 # Add compile definition if using Jolt Physics
-if(USE_JOLT_PHYSICS)
-    add_compile_definitions(USE_JOLT_PHYSICS)
-    message(STATUS "Using Jolt Physics engine")
-else()
-    message(STATUS "Using ODE Physics engine (default)")
-endif()
+message(STATUS "Using Jolt Physics engine")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -29,15 +21,21 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 include_directories(
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/external
-    ${CMAKE_SOURCE_DIR}/external/ode/include
     ${CMAKE_SOURCE_DIR}/tools
     ${CMAKE_SOURCE_DIR}
 )
+# include_directories(
+#     ${CMAKE_SOURCE_DIR}/src
+#     ${CMAKE_SOURCE_DIR}/external
+#     ${CMAKE_SOURCE_DIR}/external/ode/include
+#     ${CMAKE_SOURCE_DIR}/tools
+#     ${CMAKE_SOURCE_DIR}
+# )
 
 # Global library directories
-link_directories(
-    ${CMAKE_SOURCE_DIR}/external/ode/ode/src/.libs
-)
+# link_directories(
+#     ${CMAKE_SOURCE_DIR}/external/ode/ode/src/.libs
+# )
 
 # Platform detection
 if(UNIX AND NOT APPLE)
@@ -49,7 +47,9 @@ add_compile_options(-Wall -Wextra)
 add_compile_options(-Wno-deprecated-declarations)
 
 # Disable AVX for WSL2 compatibility, but enable SSE4.1 for Jolt Physics
-add_compile_options(-mno-avx -mno-avx2 -mno-avx512f -msse4.1)
+if(UNIX AND NOT APPLE)
+    add_compile_options(-mno-avx -mno-avx2 -mno-avx512f -msse4.1)
+endif()
 
 # Fast floating point
 add_compile_options(-ffast-math)
@@ -74,20 +74,20 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Helper function to build ODE if needed
-function(build_ode_if_needed)
-    if(UNIX AND NOT APPLE)
-        add_custom_command(
-            OUTPUT ${CMAKE_SOURCE_DIR}/external/ode/ode/src/.libs/libode.a
-            COMMAND ${CMAKE_SOURCE_DIR}/build_ode.sh
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            COMMENT "Building ODE library if needed"
-        )
-        add_custom_target(ode_build DEPENDS ${CMAKE_SOURCE_DIR}/external/ode/ode/src/.libs/libode.a)
-    endif()
-endfunction()
+# function(build_ode_if_needed)
+#     if(UNIX AND NOT APPLE)
+#         add_custom_command(
+#             OUTPUT ${CMAKE_SOURCE_DIR}/external/ode/ode/src/.libs/libode.a
+#             COMMAND ${CMAKE_SOURCE_DIR}/build_ode.sh
+#             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+#             COMMENT "Building ODE library if needed"
+#         )
+#         add_custom_target(ode_build DEPENDS ${CMAKE_SOURCE_DIR}/external/ode/ode/src/.libs/libode.a)
+#     endif()
+# endfunction()
 
 # Build ODE
-build_ode_if_needed()
+# build_ode_if_needed()
 
 # ============================================================================
 # Static Libraries
@@ -135,6 +135,15 @@ file(GLOB NVIMAGE_SOURCES external/nvImage/*.cpp)
 file(GLOB NVIMAGE_HEADERS external/nvImage/*.h)
 add_library(nvImage STATIC ${NVIMAGE_SOURCES} ${NVIMAGE_HEADERS})
 
+# Platform-specific GLEW linking for nvImage
+if(APPLE)
+    find_package(GLEW REQUIRED)
+    target_include_directories(nvImage PRIVATE ${GLEW_INCLUDE_DIRS})
+    target_link_libraries(nvImage GLEW::GLEW)
+elseif(LINUX)
+    target_link_libraries(nvImage GLEW)
+endif()
+
 # tinycthread Library (C library)
 file(GLOB TINYCTHREAD_SOURCES external/tinycthread/*.c)
 file(GLOB TINYCTHREAD_HEADERS external/tinycthread/*.h)
@@ -167,10 +176,11 @@ target_link_libraries(TestClientServer ClientServer Protocol Network Core)
 # TestVirtualGo
 file(GLOB TESTVIRTUALGO_SOURCES tests/virtualgo/*.cpp)
 add_executable(TestVirtualGo ${TESTVIRTUALGO_SOURCES})
-target_link_libraries(TestVirtualGo VirtualGo Core ode Jolt::Jolt)
-if(TARGET ode_build)
-    add_dependencies(TestVirtualGo ode_build)
-endif()
+target_link_libraries(TestVirtualGo VirtualGo Core Jolt::Jolt)
+# target_link_libraries(TestVirtualGo VirtualGo Core ode Jolt::Jolt)
+# if(TARGET ode_build)
+#     add_dependencies(TestVirtualGo ode_build)
+# endif()
 
 # ============================================================================
 # Soak Test Executables
@@ -203,12 +213,12 @@ target_link_libraries(ProfileClientServer ClientServer Protocol Network Core)
 # FontTool
 file(GLOB FONTTOOL_SOURCES tools/Font/*.cpp)
 add_executable(FontTool ${FONTTOOL_SOURCES})
-target_link_libraries(FontTool Core freetype jansson)
+target_link_libraries(FontTool Core)
 
 # StoneTool
 file(GLOB STONETOOL_SOURCES tools/Stone/*.cpp)
 add_executable(StoneTool ${STONETOOL_SOURCES})
-target_link_libraries(StoneTool VirtualGo Core jansson)
+target_link_libraries(StoneTool VirtualGo Core Jolt::Jolt)
 
 # ============================================================================
 # Main Game Executables
@@ -220,17 +230,22 @@ add_executable(Client ${GAME_SOURCES})
 target_compile_definitions(Client PRIVATE CLIENT)
 target_link_libraries(Client
     VirtualGo Cubes ClientServer Protocol Network Core
-    nvImage tinycthread ode Jolt::Jolt
+    nvImage tinycthread Jolt::Jolt
 )
+# target_link_libraries(Client
+#     VirtualGo Cubes ClientServer Protocol Network Core
+#     nvImage tinycthread ode Jolt::Jolt
+# )
 
-if(TARGET ode_build)
-    add_dependencies(Client ode_build)
-endif()
+# if(TARGET ode_build)
+#     add_dependencies(Client ode_build)
+# endif()
 
 # Platform-specific linking for Client
 if(APPLE)
+    find_package(glfw3 REQUIRED)
     target_link_libraries(Client
-        GLEW glfw
+        GLEW::GLEW glfw
         "-framework GLUT"
         "-framework OpenGL"
         "-framework Cocoa"
@@ -263,12 +278,15 @@ endif()
 # Server
 add_executable(Server ${GAME_SOURCES})
 target_link_libraries(Server
-    Cubes ClientServer Protocol Network Core ode Jolt::Jolt
+    Cubes ClientServer Protocol Network Core Jolt::Jolt
 )
+# target_link_libraries(Server
+#     Cubes ClientServer Protocol Network Core ode Jolt::Jolt
+# )
 
-if(TARGET ode_build)
-    add_dependencies(Server ode_build)
-endif()
+# if(TARGET ode_build)
+#     add_dependencies(Server ode_build)
+# endif()
 
 # ============================================================================
 # Custom Targets (equivalent to Premake custom actions)

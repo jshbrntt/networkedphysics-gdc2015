@@ -96,7 +96,7 @@ namespace protocol
 
         ChannelStructure( core::Allocator & channelAllocator, core::Allocator & channelDataAllocator, int numChannels );
 
-        ~ChannelStructure();
+        virtual ~ChannelStructure();
 
         int GetNumChannels() const
         {
