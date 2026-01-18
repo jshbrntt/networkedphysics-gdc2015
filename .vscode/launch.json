@@ -2,6 +2,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Cubes",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceRoot}/bin/Client",
+            "args": [
+                "+load",
+                "cubes"
+            ],
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": "Build"
+        },
+        {
             "name": "Client",
             "type": "lldb",
             "request": "launch",
@@ -16,7 +28,8 @@
             "request": "launch",
             "program": "${workspaceRoot}/bin/Server",
             "args": [],
-            "cwd": "${workspaceRoot}"
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": "Build"
         }
     ]
 }
