@@ -82,6 +82,7 @@ GameClient * CreateGameClient( core::Allocator & allocator, int clientPort )
     bsdSocketConfig.port = clientPort;
     bsdSocketConfig.maxPacketSize = 1200;
     bsdSocketConfig.packetFactory = packetFactory;
+    bsdSocketConfig.ipv6 = false;
     auto networkInterface = CORE_NEW( allocator, network::BSDSocket, bsdSocketConfig );
 
     network::SimulatorConfig networkSimulatorConfig;

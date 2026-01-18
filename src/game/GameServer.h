@@ -55,6 +55,7 @@ GameServer * CreateGameServer( core::Allocator & allocator, int serverPort, int 
     bsdSocketConfig.port = serverPort;
     bsdSocketConfig.maxPacketSize = 1200;
     bsdSocketConfig.packetFactory = packetFactory;
+    bsdSocketConfig.ipv6 = false;
     auto networkInterface = CORE_NEW( allocator, network::BSDSocket, bsdSocketConfig );
 
     network::SimulatorConfig networkSimulatorConfig;
