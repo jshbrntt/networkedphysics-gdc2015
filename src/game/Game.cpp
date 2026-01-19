@@ -392,9 +392,22 @@ int main( int argc, char ** argv )
     
     printf( "%.3f: Started game server on port %d\n", global.timeBase.time, ServerPort );
 
+    // Initialize server-side physics
+    server->InitializePhysics();
+
     while ( true )
     {
+        // Process incoming client messages (including input)
+        server->ProcessClientMessages();
+
+        // Update networking
         server->Update( global.timeBase );
+
+        // Update physics simulation
+        server->UpdatePhysics( global.timeBase.deltaTime );
+
+        // Broadcast state to all clients
+        server->BroadcastState();
 
         core::sleep_milliseconds( global.timeBase.deltaTime * 1000 );
 

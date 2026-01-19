@@ -10,6 +10,7 @@
 #include "CompressionDemo.h"
 #include "DeltaDemo.h"
 #include "SyncDemo.h"
+#include "NetworkedDemo.h"
 #include "Render.h"
 #include "Global.h"
 #include "Console.h"
@@ -65,6 +66,10 @@ bool DemoManager::LoadDemo( const char * name )
     else if ( strcmp( name, "sync" ) == 0 )
     {
         m_demo = CORE_NEW( *m_allocator, SyncDemo, *m_allocator );
+    }
+    else if ( strcmp( name, "networked" ) == 0 )
+    {
+        m_demo = CORE_NEW( *m_allocator, NetworkedDemo, *m_allocator );
     }
     else
     {

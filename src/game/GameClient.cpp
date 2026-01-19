@@ -10,6 +10,7 @@
 #include "GamePackets.h"
 #include "GameMessages.h"
 #include "GameChannelStructure.h"
+#include "protocol/Connection.h"
 
 GameClient::GameClient( const clientServer::ClientConfig & config ) : Client( config ) 
 {
@@ -68,6 +69,29 @@ void GameClient::OnServerDataReceived( const protocol::Block & block )
     printf( "%.3f: Client received server data: %d bytes\n", GetTime(), block.GetSize() );
 
     SetContext( clientServer::CONTEXT_USER, block.GetData() );
+}
+
+void GameClient::SendInput( const game::Input & input )
+{
+    if ( GetState() != clientServer::CLIENT_STATE_CONNECTED )
+        return;
+
+    auto connection = GetConnection();
+    if ( !connection )
+        return;
+
+    auto channel = (protocol::ReliableMessageChannel*) connection->GetChannel( 0 );
+    if ( !channel )
+        return;
+
+    auto channelStructure = (GameChannelStructure*) GetConfig().channelStructure;
+    auto messageFactory = channelStructure->GetConfig().messageFactory;
+    auto msg = (InputMessage*) messageFactory->Create( MESSAGE_INPUT );
+
+    msg->sequence = m_inputSequence++;
+    msg->input = input;
+
+    channel->SendMessage( msg );
 }
 
 GameClient * CreateGameClient( core::Allocator & allocator, int clientPort )

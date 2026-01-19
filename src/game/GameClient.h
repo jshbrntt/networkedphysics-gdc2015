@@ -4,6 +4,7 @@
 #define GAME_CLIENT_H
 
 #include "ClientServer/Client.h"
+#include "cubes/Game.h"
 
 extern class GameClient * CreateGameClient( core::Allocator & allocator, int clientPort = 0 );
 
@@ -18,6 +19,13 @@ public:
     uint16_t GetPort() const;
 
     double GetTime() const;
+
+    void SendInput( const game::Input & input );
+
+    uint16_t GetInputSequence() const { return m_inputSequence; }
+
+private:
+    uint16_t m_inputSequence = 0;
 
 protected:
 
