@@ -7,6 +7,10 @@ class NetworkedPhysicsRecipe(ConanFile):
 
     def requirements(self):
         self.requires("joltphysics/5.2.0")
+        self.requires("glew/2.2.0")
+        self.requires("libpng/1.6.44")
+        self.requires("glfw/3.4")
+        self.requires("glm/1.0.1")
 
     def configure(self):
         # Configure JoltPhysics options

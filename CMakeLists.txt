@@ -2,12 +2,18 @@ cmake_minimum_required(VERSION 3.10)
 project(Protocol)
 
 # Set C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Find all Conan dependencies
 find_package(Jolt REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(PNG REQUIRED)
+find_package(glfw3 REQUIRED)
+find_package(glm REQUIRED)
 
 # Add compile definition if using Jolt Physics
 message(STATUS "Using Jolt Physics engine")
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set C standard for C files
 set(CMAKE_C_STANDARD 99)
@@ -135,14 +141,8 @@ file(GLOB NVIMAGE_SOURCES external/nvImage/*.cpp)
 file(GLOB NVIMAGE_HEADERS external/nvImage/*.h)
 add_library(nvImage STATIC ${NVIMAGE_SOURCES} ${NVIMAGE_HEADERS})
 
-# Platform-specific GLEW linking for nvImage
-if(APPLE)
-    find_package(GLEW REQUIRED)
-    target_include_directories(nvImage PRIVATE ${GLEW_INCLUDE_DIRS})
-    target_link_libraries(nvImage GLEW::GLEW)
-elseif(LINUX)
-    target_link_libraries(nvImage GLEW)
-endif()
+# Link nvImage with GLEW and PNG
+target_link_libraries(nvImage GLEW::GLEW PNG::PNG)
 
 # tinycthread Library (C library)
 file(GLOB TINYCTHREAD_SOURCES external/tinycthread/*.c)
@@ -243,7 +243,6 @@ target_link_libraries(Client
 
 # Platform-specific linking for Client
 if(APPLE)
-    find_package(glfw3 REQUIRED)
     target_link_libraries(Client
         GLEW::GLEW glfw
         "-framework GLUT"
@@ -262,7 +261,7 @@ elseif(LINUX)
         # Start static linking group
         "-Wl,-Bstatic"
         # Static libraries
-        GLEW GLU
+        GLEW::GLEW GLU
         X11 Xrandr Xi Xxf86vm
         Xext Xrender xcb
         Xau Xdmcp
